@@ -1,3 +1,8 @@
-matplotlib
-python-dateutil
-seaborn
+matplotlib==3.6.3
+python-dateutil==2.8.2
+seaborn==0.12.2
+google-api-python-client==2.77.0
+google-auth-httplib2==0.1.0
+google-auth-oauthlib==1.0.0
+pydantic==1.10.4
+pydantic[dotenv]==1.10.4
