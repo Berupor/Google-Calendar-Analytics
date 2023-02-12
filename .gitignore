@@ -167,3 +167,5 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+credentials.json
+token.json
