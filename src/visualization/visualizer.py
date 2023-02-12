@@ -30,7 +30,7 @@ class Visualizer:
             shadow=True,
         )
         plt.title(
-            f"Top {max_events} events with Longest Duratioin",
+            f"Top {max_events} events with the Longest Duratioin",
             weight="bold",
             fontsize=14,
         )

@@ -19,7 +19,7 @@ def main():
 
     data = data_transformer.get_events_duration(events)
 
-    data_visualizer.plot_bar_chart(data, max_events=5)
+    data_visualizer.plot_pie_chart(data, max_events=5)
 
 
 if __name__ == "__main__":
