@@ -8,11 +8,11 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 class CalendarAuth:
     SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
-    def __init__(self, token_path, credentials_path):
+    def __init__(self, token_path: str, credentials_path: str):
         self.token_path = token_path
         self.credentials_path = credentials_path
 
-    def get_credentials(self):
+    def get_credentials(self) -> Credentials | None:
         """
         Get the user's calendar credentials.
 

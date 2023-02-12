@@ -169,5 +169,6 @@ cython_debug/
 
 credentials.json
 token.json
-pie_plot.png
-bar_plot.png
+/src/visualization/charts/bar_plot.png
+/src/visualization/charts/pie_plot.png
+

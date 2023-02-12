@@ -12,11 +12,11 @@ class CalendarDataCollector:
         self.service = build("calendar", "v3", credentials=creds)
 
     def _get_events_by_time_range(
-        self,
-        time_min,
-        time_max,
-        calendar_id,
-    ):
+            self,
+            time_min,
+            time_max,
+            calendar_id: str,
+    ) -> list:
         """Helper function to retrieve events in a specific time range."""
         events_result = (
             self.service.events()

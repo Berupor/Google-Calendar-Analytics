@@ -2,7 +2,8 @@ import datetime
 
 
 class DataTransformer:
-    def get_events_duration(self, events):
+    @staticmethod
+    def get_events_duration(events: list) -> dict:
         event_durations = {}
 
         for event in events:

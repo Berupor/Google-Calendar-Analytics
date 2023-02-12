@@ -9,10 +9,11 @@ This Python program allows you to perform analytics on your Google Calendar even
 - Save the charts as PNG images
 
 ## Installation
-You can install the dependencies for this program by running the following command:
+1. You can install the dependencies for this program by running the following command:
 ```console
 pip install -r requirements.txt
 ```
+2. Configure `.env` file by example 
 ### Setup
 You will need to create a Google API key to be able to access your Google Calendar data. The instructions for doing this can be found in the [Google API documentation](https://developers.google.com/calendar/api/guides/quickstart/python).
 
