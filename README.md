@@ -25,3 +25,10 @@ To run the program, simply run the following command:
 python main.py
 ```
 The program will prompt you for the start and end dates for the time range you would like to analyze. After entering the dates, the program will compute the total duration of your events and generate pie charts and bar charts that visualize the duration of your events.
+
+## Weekly analytics example:
+
+
+Pie plot           |  Bar plot
+:-------------------------:|:-------------------------:
+![img](examples/pie_plot.png) | ![img](examples/bar_plot.png)
