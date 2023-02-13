@@ -17,7 +17,7 @@ pip install -r requirements.txt
 ### Setup
 You will need to create a Google API key to be able to access your Google Calendar data. The instructions for doing this can be found in the [Google API documentation](https://developers.google.com/calendar/api/guides/quickstart/python).
 
-Once you have obtained your API key, you will need to save it as a JSON file and place it in the `src/authentication/` directory of the program. The file should be named `credentials.json`
+Once you have obtained your API key, you will need to save it as a JSON file and place it in the `src/authentication/` directory of the program. The file should be renamed to `credentials.json`
 
 ## Usage
 To run the program, simply run the following command:
