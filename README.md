@@ -43,6 +43,14 @@ The program will prompt you for the start and end dates for the time range you w
 dates, the program will compute the total duration of your events and generate pie charts and bar charts that visualize
 the duration of your events.
 
+## Contribution
+If you would like to contribute to this project, please feel free to submit a pull request. Some areas where contributions are particularly welcome include:
+
+- Adding new features
+- Improving existing features
+- Debugging and fixing bugs
+- Adding tests to ensure the program is working as expected
+
 ## Weekly analytics example:
 
 |           Pie plot            |           Bar plot            |
