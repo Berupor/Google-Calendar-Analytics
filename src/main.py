@@ -34,7 +34,6 @@ class AnalyzerFacade:
             events=self.data_collector.collect_data(time_range=time_range),
             event_name=event_name,
         )
-        print(events)
         self.image_saver.save_plot(
             plot=plot.plot(events=events, event_name=event_name),
             filename=f"plot_{plot_type}",
@@ -75,7 +74,7 @@ def main():
     event_visualizer.analyze_one(
         plot_type="Line", time_range="week", event_name="Programming"
     )
-    event_visualizer.analyze_many(plot_type="Bar", time_range="week", max_events=6)
+    event_visualizer.analyze_many(plot_type="Bar", time_range="week", max_events=5)
 
 
 if __name__ == "__main__":
