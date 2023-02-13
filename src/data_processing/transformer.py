@@ -21,6 +21,7 @@ class DataTransformer:
         """
 
         event_durations = {}
+
         for event in events:
             if "dateTime" in event["start"] and "dateTime" in event["end"]:
                 summary = event["summary"]

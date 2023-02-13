@@ -76,6 +76,10 @@ class BarPlot(ManyEventPlot):
             ylabel="Duration (Hours)",
         )
         ax.set_title(ax.get_title(), fontweight="bold", fontsize=14)
+        # Add the numerical values on top of each bar
+        for i, v in enumerate(list(events.values())):
+            ax.text(i, 1, str(v), color="black", fontsize=8, ha="center")
+
         return plt
 
 
@@ -90,7 +94,14 @@ class LinePlot(OneEventPlot):
         """
 
         plt.figure(figsize=self.FIG_SIZE)
-        plt.plot(events.keys(), events.values(), color=sns.color_palette(self.COLOR)[0])
+        plt.plot(
+            events.keys(),
+            events.values(),
+            color=sns.color_palette(self.COLOR)[0],
+            marker="o",
+            markersize=5,
+            linestyle="dashed",
+        )
         plt.title(
             f"Time spent on {event_name}",
             weight="bold",
@@ -98,6 +109,10 @@ class LinePlot(OneEventPlot):
         )
         plt.xlabel("Date")
         plt.ylabel("Duration (Hours)")
+
+        # Add gridlines to the plot for improved readability
+        plt.grid(True)
+
         return plt
 
 

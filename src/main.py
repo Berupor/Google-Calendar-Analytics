@@ -74,7 +74,7 @@ def main():
     event_visualizer.analyze_one(
         plot_type="Line", time_range="week", event_name="Programming"
     )
-    event_visualizer.analyze_many(plot_type="Bar", time_range="week", max_events=5)
+    event_visualizer.analyze_many(plot_type="Pie", time_range="week", max_events=5)
 
 
 if __name__ == "__main__":
