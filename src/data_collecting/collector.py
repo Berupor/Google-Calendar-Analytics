@@ -1,8 +1,9 @@
 import datetime
 from datetime import timedelta
-from functools import lru_cache
 
 from googleapiclient.discovery import build
+
+from core.config import settings
 
 
 class CalendarDataCollector:
@@ -12,10 +13,10 @@ class CalendarDataCollector:
         self.service = build("calendar", "v3", credentials=creds)
 
     def _get_events_by_time_range(
-            self,
-            time_min,
-            time_max,
-            calendar_id: str,
+        self,
+        time_min,
+        time_max,
+        calendar_id: str,
     ) -> list:
         """Helper function to retrieve events in a specific time range."""
         events_result = (
@@ -31,16 +32,17 @@ class CalendarDataCollector:
         )
         return events_result.get("items", [])
 
-    @lru_cache(maxsize=None)
-    def collect_data(self, calendar_id: str, range_type: str) -> list:
+    def collect_data(
+        self, time_range: str, calendar_id: str = settings.profile.calendar_id
+    ) -> list:
         """Collect data from the calendar for the specified time range."""
         now = datetime.datetime.now()
 
-        if range_type not in self.TIME_RANGE_MAP:
-            raise ValueError(f"Unsupported range type: {range_type}")
+        if time_range not in self.TIME_RANGE_MAP:
+            raise ValueError(f"Unsupported range type: {time_range}")
 
         # Get the start and end times based on the range type
-        start_time = now - timedelta(days=self.TIME_RANGE_MAP[range_type])
+        start_time = now - timedelta(days=self.TIME_RANGE_MAP[time_range])
         start = start_time.replace(hour=0, minute=0, second=0)
         end = now.replace(hour=23, minute=59, second=59)
 
