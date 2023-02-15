@@ -9,3 +9,4 @@ pydantic[dotenv]==1.10.4
 pytest==7.2.1
 flake8
 isort
+mypy
