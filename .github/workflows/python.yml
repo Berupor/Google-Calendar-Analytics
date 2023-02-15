@@ -19,7 +19,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r notifications_service/requirements.txt
+          pip install -r requirements.txt
       - name: Run sanity check
         run: |
           python3 -m pytest tests/functional/src/
