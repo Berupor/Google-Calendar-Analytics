@@ -2,8 +2,7 @@ from authentication.auth import CalendarAuth
 from data_collecting.collector import CalendarDataCollector
 from data_processing.transformer import DataTransformer
 from visualization.image_saver import ImageSaver
-from visualization.visualizer_factory import (ManyEventPlot, OneEventPlot,
-                                              PlotFactory)
+from visualization.visualizer_factory import ManyEventPlot, OneEventPlot, PlotFactory
 
 
 class AnalyzerFacade:
@@ -71,10 +70,12 @@ def main():
     """
     event_visualizer = AnalyzerFacade()
 
-    event_visualizer.analyze_one(
-        plot_type="Line", time_range="week", event_name="Programming"
+    # event_visualizer.analyze_one(
+    #     plot_type="Line", time_range="week", event_name="Programming"
+    # )
+    event_visualizer.analyze_many(
+        plot_type="Bar", time_range="week", max_events=5, order=True
     )
-    event_visualizer.analyze_many(plot_type="Pie", time_range="week", max_events=5)
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ class Plot(ABC):
 
 class ManyEventPlot(Plot):
     @abstractmethod
-    def plot(self, events: dict, title: str = None):
+    def plot(self, events: dict, title: str = "Title"):
         """
         To analyze one event for a certain period of time.
         """

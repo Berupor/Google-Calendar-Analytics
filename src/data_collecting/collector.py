@@ -7,7 +7,7 @@ from core.config import settings
 
 
 class CalendarDataCollector:
-    TIME_RANGE_MAP = {"day": 1, "week": 7, "month": 30}
+    TIME_RANGE_MAP = {"today": 0, "day": 1, "week": 7, "month": 30}
 
     def __init__(self, creds):
         self.service = build("calendar", "v3", credentials=creds)
