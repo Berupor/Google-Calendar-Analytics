@@ -95,9 +95,9 @@ contributions are particularly welcome include:
 
 |              Pie plot               |              Bar plot               |
 |:-----------------------------------:|:-----------------------------------:|
-| ![img](examples/plot_Pie_ploty.png) | ![img](examples/plot_Bar_ploty.png) |
+| ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Pie_ploty.png?raw=true) | ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Bar_ploty.png?raw=true) |
 
 |              Line plot               |                        
 |:------------------------------------:|
-| ![img](examples/plot_Line_ploty.png) | 
+| ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Line_ploty.png?raw=true) | 
  
