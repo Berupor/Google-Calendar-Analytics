@@ -9,7 +9,7 @@ from setuptools import setup
 :copyright: (c) 2023 Berupor
 """
 
-version = "0.0.2"
+version = "0.1.1"
 
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
@@ -34,6 +34,7 @@ setup(
 
     packages=["google_calendar_analytics"],
     install_requires=[
+        "pandas==1.5.3",
         "python-dateutil==2.8.2",
         "google-api-python-client==2.77.0",
         "google-auth-httplib2==0.1.0",
