@@ -1,7 +1,10 @@
 python-dateutil==2.8.2
-pandas==1.5.3
 google-api-python-client==2.77.0
 google-auth-httplib2==0.1.0
 google-auth-oauthlib==1.0.0
 plotly==5.13.0
 kaleido==0.2.1
+pandas==1.5.3
+
+mypy
+pytest==7.2.1

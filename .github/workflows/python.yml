@@ -19,10 +19,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r dev.requirements.txt
       - name: Run sanity check
         run: |
           python3 -m pytest tests/functional/src/
       - name: Run mypy
         run: |
-          mypy --ignore-missing-imports src
+          mypy --ignore-missing-imports google_calendar_analytics

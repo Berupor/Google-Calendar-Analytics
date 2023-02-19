@@ -9,9 +9,47 @@ which events take up the most time.
 
 - Extract events from your Google Calendar
 - Compute the total duration of events in a specified time range
-- Visualize the duration of events in a pie chart and a bar chart
+- Visualize the duration of events in a pie chart, bar chart, or line chart
 - Limit the number of events displayed in the charts
 - Save the charts as PNG images
+
+## Example usage:
+
+```python
+from datetime import datetime
+from google.oauth2.credentials import Credentials
+
+from google_calendar_analytics import AnalyzerFacade
+
+# Example of creds dictionary. (You can get it from Google OAuth2 in you web app)
+creds = {
+    "token": "ya29.a0AVvZVsoH4qZcrGK25VwsXspJv-r9K-",
+    "refresh_token": "1//0hwlhrtalKgeRCgYIARAAGBESNwF-",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "client_id": "395np.apps.googleusercontent.com",
+    "client_secret": "GOCSPXFqoucE03VRVz",
+    "scopes": ["https://www.googleapis.com/auth/calendar"],
+    "expiry": "2023-02-18T15:30:15.674219Z"
+}
+
+creds = Credentials.from_authorized_user_info(creds)
+analyzer = AnalyzerFacade(creds)
+start_time = datetime(2023, 2, 1)
+end_time = datetime(2023, 2, 15)
+
+# Analyze a single event and generate a chart
+event_name = "Meeting"
+plot_type = "Line"
+fig_1 = analyzer.analyze_one(start_time, end_time, event_name, plot_type)
+
+# Analyze multiple events and generate a chart
+max_events = 5
+plot_type = "Pie"
+fig_2 = analyzer.analyze_many(start_time, end_time, plot_type, max_events)
+
+fig_1.show()
+fig_2.show()
+```
 
 ## Installation
 
@@ -44,7 +82,9 @@ dates, the program will compute the total duration of your events and generate p
 the duration of your events.
 
 ## Contribution
-If you would like to contribute to this project, please feel free to submit a pull request. Some areas where contributions are particularly welcome include:
+
+If you would like to contribute to this project, please feel free to submit a pull request. Some areas where
+contributions are particularly welcome include:
 
 - Adding new features
 - Improving existing features
@@ -53,11 +93,11 @@ If you would like to contribute to this project, please feel free to submit a pu
 
 ## Weekly analytics example:
 
-|           Pie plot            |           Bar plot            |
-|:-----------------------------:|:-----------------------------:|
-| ![img](examples/pie_plot.png) | ![img](examples/bar_plot.png) |
+|              Pie plot               |              Bar plot               |
+|:-----------------------------------:|:-----------------------------------:|
+| ![img](examples/plot_Pie_ploty.png) | ![img](examples/plot_Bar_ploty.png) |
 
-|           Line plot            |                        
-|:------------------------------:|
-| ![img](examples/line_plot.png) | 
+|              Line plot               |                        
+|:------------------------------------:|
+| ![img](examples/plot_Line_ploty.png) | 
  

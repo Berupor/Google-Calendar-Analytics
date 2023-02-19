@@ -1,13 +1,10 @@
-import datetime
-from datetime import timedelta
+from datetime import datetime
 
 from googleapiclient.discovery import build
 
-from core.config import settings
-
 
 class CalendarDataCollector:
-    TIME_RANGE_MAP = {"today": 0, "day": 1, "week": 7, "month": 30}
+    """A class to collect data from a Google Calendar."""
 
     def __init__(self, creds):
         self.service = build("calendar", "v3", credentials=creds)
@@ -33,23 +30,13 @@ class CalendarDataCollector:
         return events_result.get("items", [])
 
     def collect_data(
-        self, time_range: str, calendar_id: str = settings.profile.calendar_id
+        self, start_time: datetime, end_time: datetime, calendar_id: str = "primary"
     ) -> list:
         """Collect data from the calendar for the specified time range."""
-        now = datetime.datetime.now()
-
-        if time_range not in self.TIME_RANGE_MAP:
-            raise ValueError(f"Unsupported range type: {time_range}")
-
-        # Get the start and end times based on the range type
-        start_time = now - timedelta(days=self.TIME_RANGE_MAP[time_range])
-        start = start_time.replace(hour=0, minute=0, second=0)
-        end = now.replace(hour=23, minute=59, second=59)
 
         events = self._get_events_by_time_range(
             calendar_id=calendar_id,
-            time_min=start.isoformat() + "Z",
-            time_max=end.isoformat() + "Z",
+            time_min=start_time.isoformat() + "Z",
+            time_max=end_time.isoformat() + "Z",
         )
-
         return events
