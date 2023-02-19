@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import datetime
 
 from googleapiclient.discovery import build
 
@@ -10,10 +10,10 @@ class CalendarDataCollector:
         self.service = build("calendar", "v3", credentials=creds)
 
     def _get_events_by_time_range(
-            self,
-            time_min,
-            time_max,
-            calendar_id: str,
+        self,
+        time_min,
+        time_max,
+        calendar_id: str,
     ) -> list:
         """Helper function to retrieve events in a specific time range."""
         events_result = (
@@ -30,10 +30,7 @@ class CalendarDataCollector:
         return events_result.get("items", [])
 
     def collect_data(
-            self,
-            start_time: datetime,
-            end_time: datetime,
-            calendar_id: str = 'primary'
+        self, start_time: datetime, end_time: datetime, calendar_id: str = "primary"
     ) -> list:
         """Collect data from the calendar for the specified time range."""
 
