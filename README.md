@@ -1,6 +1,6 @@
 # Google Calendar Analytics
 
-![img](examples/Logo.png)
+![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/Logo.png?raw=true)
 This Python program allows you to perform analytics on your Google Calendar events. With this program, you can visualize
 the total duration of your events, compare the length of events across different time periods, and gain insights into
 which events take up the most time.
