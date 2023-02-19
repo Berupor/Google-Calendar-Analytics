@@ -9,7 +9,7 @@ from setuptools import setup
 :copyright: (c) 2023 Berupor
 """
 
-version = "0.0.2"
+version = "0.0.3"
 
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
