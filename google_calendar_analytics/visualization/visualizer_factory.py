@@ -13,7 +13,7 @@ class Plot(ABC):
 class ManyEventPlot(Plot):
     @abstractmethod
     def plot(
-        self, events: pd.DataFrame, title: str = "Title", dark_theme: bool = False
+            self, events: pd.DataFrame, title: str = "Title", dark_theme: bool = False
     ):
         """
         To analyze one event for a certain period of time.
@@ -23,11 +23,11 @@ class ManyEventPlot(Plot):
 class OneEventPlot(Plot):
     @abstractmethod
     def plot(
-        self,
-        events: pd.DataFrame,
-        event_name: str,
-        transparent: int,
-        dark_theme: bool = False,
+            self,
+            events: pd.DataFrame,
+            event_name: str,
+            transparent: int,
+            dark_theme: bool = False,
     ):
         """
         To analyze one event for a certain period of time.
@@ -36,10 +36,10 @@ class OneEventPlot(Plot):
 
 class PiePlot(ManyEventPlot):
     def plot(
-        self,
-        events: pd.DataFrame,
-        dark_theme: bool = False,
-        title: str = "Top events with the Longest Duration",
+            self,
+            events: pd.DataFrame,
+            title: str = "Top events with the Longest Duration",
+            dark_theme: bool = False,
     ) -> go.Figure:
         """
         Plot a pie chart of the event durations.
@@ -47,6 +47,7 @@ class PiePlot(ManyEventPlot):
         Args:
             events (pd.DataFrame): A DataFrame containing the event names as the index and the event durations as the values.
             title (str): The title of the chart.
+            dark_theme (bool): If True, the chart will be generated with a dark theme.
         """
         if dark_theme:
             color_palette = px.colors.sequential.Blugrn
@@ -78,10 +79,10 @@ class PiePlot(ManyEventPlot):
 
 class BarPlot(ManyEventPlot):
     def plot(
-        self,
-        events: pd.DataFrame,
-        title: str = "Top events with the Longest Duration",
-        dark_theme: bool = False,
+            self,
+            events: pd.DataFrame,
+            title: str = "Top events with the Longest Duration",
+            dark_theme: bool = False,
     ) -> go.Figure:
         """
         Plot a bar chart of the event durations.
@@ -117,11 +118,11 @@ class BarPlot(ManyEventPlot):
 
 class LinePlot(OneEventPlot):
     def plot(
-        self,
-        events: pd.DataFrame,
-        event_name: str,
-        transparent: int = 1,
-        dark_theme: bool = False,
+            self,
+            events: pd.DataFrame,
+            event_name: str,
+            transparent: int = 1,
+            dark_theme: bool = False,
     ) -> go.Figure:
         """
         Plot a line chart of the event durations.
@@ -197,6 +198,8 @@ class LinePlot(OneEventPlot):
                 ),
                 margin=dict(l=50, r=50, t=80, b=50),
                 template="plotly_white",
+                width=self.FIG_SIZE["width"],
+                height=self.FIG_SIZE["height"],
                 plot_bgcolor=f"rgba(255, 255, 255, {transparent})",
                 paper_bgcolor=f"rgba(255, 255, 255, {transparent})",
             )
@@ -209,7 +212,13 @@ class LinePlot(OneEventPlot):
 
 
 def PlotFactory(plot_type="Pie"):
-    """Factory Method"""
+    """
+    Factory method to create a plot object.
+
+    Args:
+        plot_type (str): The type of plot to create.
+    """
+
     plots = {"Pie": PiePlot, "Bar": BarPlot, "Line": LinePlot}
 
     if plot_type not in plots:

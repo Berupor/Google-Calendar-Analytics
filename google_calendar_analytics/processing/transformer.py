@@ -29,8 +29,7 @@ class DataTransformer:
             A pandas dataframe with columns 'Event' and 'Duration' for the top events by duration.
         """
 
-        event_durations = {}
-
+        event_durations: dict[str, float] = {}
         for event in events:
             # Get the start and end times in ISO format
             start, end = event.get("start", {}).get("dateTime"), event.get(
@@ -62,7 +61,7 @@ class DataTransformer:
             Columns 'Date' and 'Duration' display the date and the event's duration in hours, respectively.
         """
 
-        one_event = {}
+        one_event: dict[str, float] = {}
         for event in events:
             if event["summary"] == event_name:
                 start, end = event["start"]["dateTime"], event["end"]["dateTime"]

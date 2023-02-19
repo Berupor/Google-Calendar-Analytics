@@ -14,7 +14,7 @@ class TestPlots(unittest.TestCase):
 
     def test_pie_plot(self):
         plot = PiePlot()
-        fig = plot.plot(self.df, "Pie Chart Title")
+        fig = plot.plot(self.df, title="Pie Chart Title")
         self.assertIsInstance(fig, go.Figure)
         self.assertEqual(fig.layout.title.text, "Pie Chart Title")
         self.assertEqual(fig.layout.width, 800)
