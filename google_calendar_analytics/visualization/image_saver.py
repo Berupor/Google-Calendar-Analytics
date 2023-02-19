@@ -4,6 +4,4 @@ class ImageSaver:
         self.RESOLUTION = {"width": 1200, "height": 600, "scale": 4}
 
     def save_plot(self, plot, filename):
-        plot.write_image(
-            f"{self.SAVING_ROUTE}/{filename}_ploty.png", **self.RESOLUTION
-        )
+        plot.write_image(f"{self.SAVING_ROUTE}/{filename}.png", **self.RESOLUTION)
