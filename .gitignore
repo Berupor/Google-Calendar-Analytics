@@ -169,5 +169,6 @@ cython_debug/
 
 credentials.json
 token.json
-/src/visualization/charts/
+/google_calendar_analytics/visualization/charts/
 
+/google_calendar_analytics/example.py
