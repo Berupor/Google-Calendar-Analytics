@@ -4,9 +4,6 @@ PYTHON_INTERPRETER = python3
 # Define the name of the requirements file
 REQUIREMENTS_FILE = requirements.txt
 
-# Define the name of the main script
-MAIN_SCRIPT = main.py
-
 # Define the name of the output file
 OUTPUT_FILE = output.txt
 
@@ -16,6 +13,7 @@ OUTPUT_FILE = output.txt
 # Display the help message
 help:
 	@echo "Available targets:"
+	@echo "  prepare          Run all the preparation steps before pushing the code"
 	@echo "  test             Run the unit tests"
 	@echo "  lint             Run the linter"
 	@echo "  format           Format the code using black"
@@ -34,18 +32,21 @@ lint:
 
 # Format the code using black
 format:
-	$(PYTHON_INTERPRETER) -m isort .
-	$(PYTHON_INTERPRETER) -m black .
+	$(PYTHON_INTERPRETER) -m isort google_calendar_analytics
+	$(PYTHON_INTERPRETER) -m black google_calendar_analytics
 
 # Check the code formatting using black
 check-format:
-	$(PYTHON_INTERPRETER) -m black --check .
+	$(PYTHON_INTERPRETER) -m black --check google_calendar_analytics
 
 # Check the code style using flake8
 check-style:
-	$(PYTHON_INTERPRETER) -m flake8
+	$(PYTHON_INTERPRETER) -m flake8 google_calendar_analytics --ignore=E501
 
 # Check the type annotations using mypy
 check-types:
-	$(PYTHON_INTERPRETER) -m mypy .
+	$(PYTHON_INTERPRETER) -m mypy --ignore-missing-imports google_calendar_analytics
+
+prepare: format check-format check-style check-types
+
 

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from google.oauth2.credentials import Credentials
+from google.oauth2.credentials import Credentials  # type: ignore
 
 from .collecting.collector import CalendarDataCollector
 from .processing.transformer import DataTransformer

@@ -13,14 +13,14 @@ from .processing.transformer import DataTransformer
 from .visualization.visualizer_factory import BarPlot, LinePlot, PiePlot, PlotFactory
 
 __all__ = [
-    DataTransformer,
-    PlotFactory,
-    PiePlot,
-    BarPlot,
-    CalendarAuth,
-    LinePlot,
-    CalendarDataCollector,
-    AnalyzerFacade,
+    "DataTransformer",
+    "PlotFactory",
+    "PiePlot",
+    "BarPlot",
+    "CalendarAuth",
+    "LinePlot",
+    "CalendarDataCollector",
+    "AnalyzerFacade",
 ]
 
 __author__ = "Berupor"

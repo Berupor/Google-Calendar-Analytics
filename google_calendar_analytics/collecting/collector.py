@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from googleapiclient.discovery import build
+from googleapiclient.discovery import build  # type: ignore
 
 
 class CalendarDataCollector:
