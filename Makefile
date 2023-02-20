@@ -15,7 +15,6 @@ help:
 	@echo "Available targets:"
 	@echo "  prepare          Run all the preparation steps before pushing the code"
 	@echo "  test             Run the unit tests"
-	@echo "  lint             Run the linter"
 	@echo "  format           Format the code using black"
 	@echo "  check-format     Check the code formatting using black"
 	@echo "  check-style      Check the code style using flake8"
@@ -25,10 +24,6 @@ help:
 # Run the unit tests
 test:
 	$(PYTHON_INTERPRETER) -m pytest tests/functional/src/
-
-# Run the linter
-lint:
-	$(PYTHON_INTERPRETER) -m flake8 google_calendar_analytics --ignore=E501
 
 # Format the code using black
 format:
@@ -47,6 +42,6 @@ check-style:
 check-types:
 	$(PYTHON_INTERPRETER) -m mypy --ignore-missing-imports google_calendar_analytics
 
-prepare: format check-format check-style check-types
+prepare: format check-format check-types test
 
 

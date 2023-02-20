@@ -31,7 +31,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "pandas==1.5.3",
-        "python-dateutil==2.8.2",
+        "google-auth==2.16.0",
         "google-api-python-client==2.77.0",
         "google-auth-httplib2==0.1.0",
         "google-auth-oauthlib==1.0.0",
