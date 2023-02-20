@@ -30,7 +30,7 @@ test:
 
 # Run the linter
 lint:
-	$(PYTHON_INTERPRETER) -m flake8 src --ignore=E501
+	$(PYTHON_INTERPRETER) -m flake8 google_calendar_analytics --ignore=E501
 
 # Format the code using black
 format:

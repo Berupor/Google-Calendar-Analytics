@@ -11,9 +11,16 @@ which events take up the most time.
 - Compute the total duration of events in a specified time range
 - Visualize the duration of events in a pie chart, bar chart, or line chart
 - Limit the number of events displayed in the charts
-- Save the charts as PNG images
+- Wide chart customization. For example, dark mode and transparent background
 
-## Example usage:
+## Usage
+To use the Google Calendar Analytics program, first install the dependencies by running the following command:
+
+```bash
+pip install google-calendar-analytics
+```
+
+You can then import the AnalyzerFacade class and create an instance with your Google Calendar credentials:
 
 ```python
 from datetime import datetime
@@ -33,53 +40,31 @@ creds = {
 }
 
 creds = Credentials.from_authorized_user_info(creds)
-analyzer = AnalyzerFacade(creds)
+analyzer = AnalyzerFacade(creds=creds)
+```
+
+Once you have an AnalyzerFacade instance, you can use its analyze_one and analyze_many methods to generate charts. For example, to analyze a single event and generate a chart, you can use the following code:
+
+```python
 start_time = datetime(2023, 2, 1)
 end_time = datetime(2023, 2, 15)
 
-# Analyze a single event and generate a chart
 event_name = "Meeting"
 plot_type = "Line"
-fig_1 = analyzer.analyze_one(start_time, end_time, event_name, plot_type)
+fig = analyzer.analyze_one(start_time, end_time, event_name, plot_type)
+fig.show()
+```
+To analyze multiple events and generate a chart, you can use the following code:
 
-# Analyze multiple events and generate a chart
+```python
+start_time = datetime(2023, 2, 1)
+end_time = datetime(2023, 2, 15)
+
 max_events = 5
 plot_type = "Pie"
-fig_2 = analyzer.analyze_many(start_time, end_time, plot_type, max_events)
-
-fig_1.show()
-fig_2.show()
+fig = analyzer.analyze_many(start_time, end_time, plot_type, max_events)
+fig.show()
 ```
-
-## Installation
-
-1. You can install the dependencies for this program by running the following command:
-
-```console
-pip install -r requirements.txt
-```
-
-2. Configure `.env` file by example
-
-### Setup
-
-You will need to create a Google API key to be able to access your Google Calendar data. The instructions for doing this
-can be found in the [Google API documentation](https://developers.google.com/calendar/api/guides/quickstart/python).
-
-Once you have obtained your API key, you will need to save it as a JSON file and place it in the `src/authentication/`
-directory of the program. The file should be renamed to `credentials.json`
-
-## Usage
-
-To run the program, simply run the following command:
-
-```console
-python main.py
-```
-
-The program will prompt you for the start and end dates for the time range you would like to analyze. After entering the
-dates, the program will compute the total duration of your events and generate pie charts and bar charts that visualize
-the duration of your events.
 
 ## Contribution
 

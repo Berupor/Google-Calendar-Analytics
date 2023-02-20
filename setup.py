@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
 from io import open
-from setuptools import setup
+
+from setuptools import find_packages, setup
+
+from google_calendar_analytics._version import __version__
 
 """
 :authors: Berupor
@@ -9,7 +12,7 @@ from setuptools import setup
 :copyright: (c) 2023 Berupor
 """
 
-version = "0.1.1"
+version = __version__
 
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
@@ -17,22 +20,15 @@ with open("README.md", "r", encoding="utf-8") as f:
 setup(
     name="google_calendar_analytics",
     version=version,
-
-    author='Berupor',
-    author_email='evgeniy.zelenoff@gmail.com',
-
-    description=(
-        u"A Python library for analyzing Google Calendar data."
-    ),
+    author="Berupor",
+    author_email="evgeniy.zelenoff@gmail.com",
+    description=("A Python library for analyzing Google Calendar data."),
     long_description=long_description,
     long_description_content_type="text/markdown",
-
     url="https://github.com/Berupor/Calendar-Analytics",
-    download_url=f"https://github.com/Berupor/Calendar-Analytics/archive/v{version}.zip",
-
+    download_url=f"https://github.com/Berupor/Calendar-Analytics/archive/refs/tags/v{version}-alpha.zip",
     license="MIT",
-
-    packages=["google_calendar_analytics"],
+    packages=find_packages(),
     install_requires=[
         "pandas==1.5.3",
         "python-dateutil==2.8.2",
@@ -49,7 +45,6 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.11",
         "Topic :: Software Development :: Libraries :: Python Modules",
-        "Topic :: Utilities"
-    ]
-
+        "Topic :: Utilities",
+    ],
 )

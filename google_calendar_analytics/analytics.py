@@ -1,10 +1,10 @@
 from datetime import datetime
 
-from collecting.collector import CalendarDataCollector
-from processing.transformer import DataTransformer
 from google.oauth2.credentials import Credentials
-from visualization.visualizer_factory import (ManyEventPlot, OneEventPlot,
-                                              PlotFactory)
+
+from .collecting.collector import CalendarDataCollector
+from .processing.transformer import DataTransformer
+from .visualization.visualizer_factory import ManyEventPlot, OneEventPlot, PlotFactory
 
 
 class AnalyzerFacade:

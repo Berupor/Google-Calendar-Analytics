@@ -3,14 +3,19 @@ import unittest
 import pandas as pd
 import plotly.graph_objs as go
 
-from google_calendar_analytics.visualization.visualizer_factory import BarPlot, LinePlot, PiePlot, PlotFactory
+from google_calendar_analytics.visualization.visualizer_factory import (
+    BarPlot,
+    LinePlot,
+    PiePlot,
+    PlotFactory,
+)
 
 
 class TestPlots(unittest.TestCase):
-
     def setUp(self):
-        self.df = pd.DataFrame({"Event": ["A", "B", "C", "D"],
-                                "Duration": [10, 20, 30, 40]})
+        self.df = pd.DataFrame(
+            {"Event": ["A", "B", "C", "D"], "Duration": [10, 20, 30, 40]}
+        )
 
     def test_pie_plot(self):
         plot = PiePlot()
@@ -29,8 +34,12 @@ class TestPlots(unittest.TestCase):
         self.assertEqual(fig.layout.height, 400)
 
     def test_line_plot(self):
-        df = pd.DataFrame({"Date": pd.date_range(start="2022-01-01", periods=10, freq="D"),
-                           "Duration": [10, 20, 30, 40, 50, 40, 30, 20, 10, 5]})
+        df = pd.DataFrame(
+            {
+                "Date": pd.date_range(start="2022-01-01", periods=10, freq="D"),
+                "Duration": [10, 20, 30, 40, 50, 40, 30, 20, 10, 5],
+            }
+        )
         plot = LinePlot()
         fig = plot.plot(df, "Event A")
         self.assertIsInstance(fig, go.Figure)

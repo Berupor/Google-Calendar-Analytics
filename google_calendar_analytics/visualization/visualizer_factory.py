@@ -13,7 +13,7 @@ class Plot(ABC):
 class ManyEventPlot(Plot):
     @abstractmethod
     def plot(
-            self, events: pd.DataFrame, title: str = "Title", dark_theme: bool = False
+        self, events: pd.DataFrame, title: str = "Title", dark_theme: bool = False
     ):
         """
         To analyze one event for a certain period of time.
@@ -23,11 +23,11 @@ class ManyEventPlot(Plot):
 class OneEventPlot(Plot):
     @abstractmethod
     def plot(
-            self,
-            events: pd.DataFrame,
-            event_name: str,
-            transparent: int,
-            dark_theme: bool = False,
+        self,
+        events: pd.DataFrame,
+        event_name: str,
+        transparent: int,
+        dark_theme: bool = False,
     ):
         """
         To analyze one event for a certain period of time.
@@ -36,10 +36,10 @@ class OneEventPlot(Plot):
 
 class PiePlot(ManyEventPlot):
     def plot(
-            self,
-            events: pd.DataFrame,
-            title: str = "Top events with the Longest Duration",
-            dark_theme: bool = False,
+        self,
+        events: pd.DataFrame,
+        title: str = "Top events with the Longest Duration",
+        dark_theme: bool = False,
     ) -> go.Figure:
         """
         Plot a pie chart of the event durations.
@@ -79,10 +79,10 @@ class PiePlot(ManyEventPlot):
 
 class BarPlot(ManyEventPlot):
     def plot(
-            self,
-            events: pd.DataFrame,
-            title: str = "Top events with the Longest Duration",
-            dark_theme: bool = False,
+        self,
+        events: pd.DataFrame,
+        title: str = "Top events with the Longest Duration",
+        dark_theme: bool = False,
     ) -> go.Figure:
         """
         Plot a bar chart of the event durations.
@@ -118,11 +118,11 @@ class BarPlot(ManyEventPlot):
 
 class LinePlot(OneEventPlot):
     def plot(
-            self,
-            events: pd.DataFrame,
-            event_name: str,
-            transparent: int = 1,
-            dark_theme: bool = False,
+        self,
+        events: pd.DataFrame,
+        event_name: str,
+        transparent: int = 1,
+        dark_theme: bool = False,
     ) -> go.Figure:
         """
         Plot a line chart of the event durations.
