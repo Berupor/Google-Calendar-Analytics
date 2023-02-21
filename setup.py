@@ -37,6 +37,7 @@ setup(
         "google-auth-oauthlib==1.0.0",
         "plotly==5.13.0",
         "kaleido==0.2.1",
+        "setuptools~=60.2.0"
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
