@@ -29,7 +29,7 @@ from google.oauth2.credentials import Credentials
 
 from google_calendar_analytics import AnalyzerFacade
 
-# Example of creds dictionary. (You can get it from Google OAuth2 in you web app)
+# Example of creds dictionary. (You can get it from Google OAuth2 in your web app)
 creds = {
     "token": "ya29.a0AVvZVsoH4qZcrGK25VwsXspJv-r9K-",
     "refresh_token": "1//0hwlhrtalKgeRCgYIARAAGBESNwF-",
