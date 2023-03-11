@@ -9,11 +9,12 @@ which events take up the most time.
 
 - Extract events from your Google Calendar
 - Compute the total duration of events in a specified time range
-- Visualize the duration of events in a pie chart, bar chart, or line chart
+- Visualize the duration of events in a pie chart, bar chart, line chart and more
 - Limit the number of events displayed in the charts
 - Wide chart customization. For example, dark mode and transparent background
 
 ## Usage
+
 To use the Google Calendar Analytics program, first install the dependencies by running the following command:
 
 ```bash
@@ -43,7 +44,8 @@ creds = Credentials.from_authorized_user_info(creds)
 analyzer = AnalyzerFacade(creds=creds)
 ```
 
-Once you have an AnalyzerFacade instance, you can use its analyze_one and analyze_many methods to generate charts. For example, to analyze a single event and generate a chart, you can use the following code:
+Once you have an AnalyzerFacade instance, you can use its analyze_one and analyze_many methods to generate charts. For
+example, to analyze a single event and generate a chart, you can use the following code:
 
 ```python
 start_time = datetime(2023, 2, 1)
@@ -54,6 +56,7 @@ plot_type = "Line"
 fig = analyzer.analyze_one(start_time, end_time, event_name, plot_type)
 fig.show()
 ```
+
 To analyze multiple events and generate a chart, you can use the following code:
 
 ```python
@@ -76,13 +79,13 @@ contributions are particularly welcome include:
 - Debugging and fixing bugs
 - Adding tests to ensure the program is working as expected
 
-## Weekly analytics example:
+## Analytics example:
 
 |              Pie plot               |              Bar plot               |
 |:-----------------------------------:|:-----------------------------------:|
 | ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Pie_ploty.png?raw=true) | ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Bar_ploty.png?raw=true) |
 
-|              Line plot               |                        
-|:------------------------------------:|
-| ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Line_ploty.png?raw=true) | 
+|              Line plot               |                                          Multy line plot                                           |          
+|:------------------------------------:|:--------------------------------------------------------------------------------------------------:|
+| ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Line_ploty.png?raw=true) | ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Multy.png?raw=true) |
  
