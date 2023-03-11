@@ -9,37 +9,55 @@ class Plot(ABC):
     FIG_SIZE = {"width": 800, "height": 400}
     COLORS = px.colors.qualitative.Pastel
 
+    def __init__(self, dark_theme=False, transparency=1.0):
+        self.dark_theme = dark_theme
+        self.transparency = transparency
+
+        if self.dark_theme:
+            self.font_color = "white"
+            self.plot_bgcolor = f"rgba(34, 34, 34, {self.transparency})"
+            self.paper_bgcolor = f"rgba(34, 34, 34, {self.transparency})"
+        else:
+            self.font_color = "black"
+            self.plot_bgcolor = f"rgba(247, 247, 247, {self.transparency})"
+            self.paper_bgcolor = f"rgba(255, 255, 255, {self.transparency})"
+
 
 class ManyEventPlot(Plot):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     @abstractmethod
     def plot(
-        self, events: pd.DataFrame, title: str = "Title", dark_theme: bool = False
+            self,
+            events: pd.DataFrame,
+            title: str = "Title",
     ):
         """
-        To analyze one event for a certain period of time.
+        Analyze one event for a certain period of time.
         """
 
 
 class OneEventPlot(Plot):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     @abstractmethod
     def plot(
-        self,
-        events: pd.DataFrame,
-        event_name: str,
-        transparent: int,
-        dark_theme: bool = False,
+            self,
+            events: pd.DataFrame,
+            event_name: str,
     ):
         """
-        To analyze one event for a certain period of time.
+        Analyze one event for a certain period of time.
         """
 
 
 class PiePlot(ManyEventPlot):
     def plot(
-        self,
-        events: pd.DataFrame,
-        title: str = "Top events with the Longest Duration",
-        dark_theme: bool = False,
+            self,
+            events: pd.DataFrame,
+            title: str = "Top events with the Longest Duration",
     ) -> go.Figure:
         """
         Plot a pie chart of the event durations.
@@ -47,28 +65,25 @@ class PiePlot(ManyEventPlot):
         Args:
             events (pd.DataFrame): A DataFrame containing the event names as the index and the event durations as the values.
             title (str): The title of the chart.
-            dark_theme (bool): If True, the chart will be generated with a dark theme.
         """
-        if dark_theme:
-            color_palette = px.colors.sequential.Blugrn
-        else:
-            color_palette = self.COLORS
-
         fig = go.Figure(
             go.Pie(
                 labels=events.Event,
                 values=events.Duration,
                 textposition="auto",
                 name="Duration",
-                marker=dict(colors=color_palette),
+                marker=dict(colors=self.COLORS),
                 textinfo="label+percent",
             )
         )
         fig.update_layout(
             title=title,
-            title_font=dict(size=18),
+            title_font=dict(size=18, color=self.font_color),
             width=self.FIG_SIZE["width"],
             height=self.FIG_SIZE["height"],
+            plot_bgcolor=self.plot_bgcolor,
+            paper_bgcolor=self.paper_bgcolor,
+            font=dict(color=self.font_color),
         )
         fig.update_traces(
             hovertemplate="<b>Event:</b> %{label} <br><b>Duration:</b> \
@@ -79,10 +94,9 @@ class PiePlot(ManyEventPlot):
 
 class BarPlot(ManyEventPlot):
     def plot(
-        self,
-        events: pd.DataFrame,
-        title: str = "Top events with the Longest Duration",
-        dark_theme: bool = False,
+            self,
+            events: pd.DataFrame,
+            title: str = "Top events with the Longest Duration",
     ) -> go.Figure:
         """
         Plot a bar chart of the event durations.
@@ -103,11 +117,17 @@ class BarPlot(ManyEventPlot):
 
         fig.update_layout(
             title=title,
-            title_font=dict(size=18),
-            xaxis=dict(title="Event", title_font=dict(size=14)),
-            yaxis=dict(title="Duration (Hours)", title_font=dict(size=14)),
+            title_font=dict(size=18, color=self.font_color),
+            xaxis=dict(title="Event", title_font=dict(size=14, color=self.font_color)),
+            yaxis=dict(
+                title="Duration (Hours)",
+                title_font=dict(size=14, color=self.font_color),
+            ),
             width=self.FIG_SIZE["width"],
             height=self.FIG_SIZE["height"],
+            plot_bgcolor=self.plot_bgcolor,
+            paper_bgcolor=self.paper_bgcolor,
+            font=dict(color=self.font_color),
         )
         fig.update_traces(
             hovertemplate="<b>Event:</b> %{x} <br><b>Duration:</b> %{y:.2f} hours",
@@ -118,11 +138,9 @@ class BarPlot(ManyEventPlot):
 
 class LinePlot(OneEventPlot):
     def plot(
-        self,
-        events: pd.DataFrame,
-        event_name: str,
-        transparent: int = 1,
-        dark_theme: bool = False,
+            self,
+            events: pd.DataFrame,
+            event_name: str,
     ) -> go.Figure:
         """
         Plot a line chart of the event durations.
@@ -130,8 +148,6 @@ class LinePlot(OneEventPlot):
         Args:
             events (pd.DataFrame): A DataFrame containing the event dates as the index and the event durations as the values.
             event_name (str): The name of the event.
-            transparent (int): The transparency of the background. If 0, the background is transparent.
-            dark_theme (bool): Whether to use a dark theme or not.
         """
         fig = go.Figure()
         fig.add_trace(
@@ -145,64 +161,35 @@ class LinePlot(OneEventPlot):
             )
         )
 
-        if dark_theme:
-            # Update the color scheme for a dark theme
-            fig.update_layout(
-                title=dict(
-                    text=f"Time spent on {event_name}",
-                    font=dict(size=16, color="white"),
-                ),
-                xaxis=dict(
-                    title="Date",
-                    showgrid=True,
-                    nticks=10,
-                    dtick="D5",
-                    gridwidth=0.2,
-                    titlefont=dict(size=14, color="white"),
-                    tickfont=dict(size=12, color="white"),
-                    tickcolor="white",
-                ),
-                yaxis=dict(
-                    title="Duration (hours)",
-                    showgrid=True,
-                    gridwidth=0.2,
-                    titlefont=dict(size=14, color="white"),
-                    tickfont=dict(size=12, color="white"),
-                    tickcolor="white",
-                ),
-                margin=dict(l=50, r=50, t=80, b=50),
-                plot_bgcolor=f"rgba(34, 34, 34, {transparent})",
-                paper_bgcolor=f"rgba(34, 34, 34, {transparent})",
-            )
-        else:
-            # Use the default color scheme
-            fig.update_layout(
-                title=dict(
-                    text=f"Time spent on {event_name}",
-                    font=dict(size=16, color="darkblue"),
-                ),
-                xaxis=dict(
-                    title="Date",
-                    showgrid=True,
-                    gridwidth=0.2,
-                    gridcolor="lightgray",
-                    dtick="D5",
-                    tickfont=dict(size=10),
-                ),
-                yaxis=dict(
-                    title="Duration (hours)",
-                    showgrid=True,
-                    gridwidth=0.2,
-                    gridcolor="lightgray",
-                    tickfont=dict(size=10),
-                ),
-                margin=dict(l=50, r=50, t=80, b=50),
-                template="plotly_white",
-                width=self.FIG_SIZE["width"],
-                height=self.FIG_SIZE["height"],
-                plot_bgcolor=f"rgba(255, 255, 255, {transparent})",
-                paper_bgcolor=f"rgba(255, 255, 255, {transparent})",
-            )
+        fig.update_layout(
+            title=dict(
+                text=f"Time spent on {event_name}",
+                font=dict(size=16, color=self.font_color),
+            ),
+            xaxis=dict(
+                title="Date",
+                showgrid=True,
+                nticks=10,
+                dtick="D5",
+                gridwidth=0.2,
+                titlefont=dict(size=14, color=self.font_color),
+                tickfont=dict(size=12, color=self.font_color),
+                tickcolor=self.font_color,
+            ),
+            yaxis=dict(
+                title="Duration (hours)",
+                showgrid=True,
+                gridwidth=0.2,
+                titlefont=dict(size=14, color=self.font_color),
+                tickfont=dict(size=12, color=self.font_color),
+                tickcolor=self.font_color,
+            ),
+            margin=dict(l=50, r=50, t=80, b=50),
+            width=self.FIG_SIZE["width"],
+            height=self.FIG_SIZE["height"],
+            plot_bgcolor=self.plot_bgcolor,
+            paper_bgcolor=self.paper_bgcolor,
+        )
 
         fig.update_traces(
             hovertemplate="<b>Date:</b> %{x} <br><b>Duration:</b> %{y:.2f} hours"
@@ -211,15 +198,90 @@ class LinePlot(OneEventPlot):
         return fig
 
 
-def PlotFactory(plot_type="Pie"):
+class MultyLinePlot(OneEventPlot):
+    def plot(
+            self,
+            events: pd.DataFrame,
+            event_name: str,
+    ) -> go.Figure:
+        """
+        Plot a line chart of the event durations.
+
+        Args:
+            events (pd.DataFrame): A DataFrame containing the event dates as the index and the event durations as the values.
+            event_name (str): The name of the event.
+        """
+        fig = go.Figure()
+
+        # Create a separate line for each period
+        for period in events.Period.unique():
+            period_events = events[events.Period == period]
+            period_start = period_events.Date.min().strftime("%m-%d")
+            period_end = period_events.Date.max().strftime("%m-%d")
+            period_label = f"{period_start} to {period_end}"
+            fig.add_trace(
+                go.Scatter(
+                    x=period_events.Day,
+                    y=period_events.Duration,
+                    mode="lines+markers",
+                    line=dict(width=2),
+                    marker=dict(size=6),
+                    name=period_label,
+                    text=period_events.Date,
+                    hovertemplate="<b>Date:</b> %{text} <br><b>Duration:</b> %{y:.2f} hours",
+                )
+            )
+            fig.update_layout(hovermode="x")
+
+        # Update the color scheme and set the title of the figure
+        fig.update_layout(
+            title=dict(
+                text=f"Time spent on the {event_name} in periods of {events.Day.max()} days",
+                font=dict(size=16, color=self.font_color),
+            ),
+            xaxis=dict(
+                title="Day",
+                showgrid=True,
+                gridwidth=0.2,
+                gridcolor=self.font_color,
+                dtick="D5",
+                titlefont=dict(size=14, color=self.font_color),
+                tickfont=dict(size=12, color=self.font_color),
+                tickcolor=self.font_color,
+            ),
+            yaxis=dict(
+                title="Duration (hours)",
+                showgrid=True,
+                gridwidth=0.2,
+                gridcolor=self.font_color,
+                titlefont=dict(size=14, color=self.font_color),
+                tickfont=dict(size=12, color=self.font_color),
+            ),
+            margin=dict(l=50, r=50, t=80, b=50),
+            width=self.FIG_SIZE["width"],
+            height=self.FIG_SIZE["height"],
+            plot_bgcolor=self.plot_bgcolor,
+            paper_bgcolor=self.paper_bgcolor,
+        )
+        return fig
+
+
+def PlotFactory(plot_type="Pie", dark_theme=False, transparency=1):
     """
     Factory method to create a plot object.
 
     Args:
         plot_type (str): The type of plot to create.
+        dark_theme (bool): Whether to use a dark theme or not.
+        transparency (float): The transparency of the chart.
     """
 
-    plots = {"Pie": PiePlot, "Bar": BarPlot, "Line": LinePlot}
+    plots = {
+        "Pie": PiePlot,
+        "Bar": BarPlot,
+        "Line": LinePlot,
+        "MultyLine": MultyLinePlot,
+    }
 
     if plot_type not in plots:
         raise ValueError(
@@ -227,4 +289,4 @@ def PlotFactory(plot_type="Pie"):
             f"Available options are: {', '.join(plots.keys())}."
         )
 
-    return plots[plot_type]()
+    return plots[plot_type](dark_theme=dark_theme, transparency=transparency)
