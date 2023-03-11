@@ -10,7 +10,8 @@ from .analytics import AnalyzerFacade
 from .authentication.auth import CalendarAuth
 from .collecting.collector import CalendarDataCollector
 from .processing.transformer import DataTransformer
-from .visualization.visualizer_factory import BarPlot, LinePlot, PiePlot, PlotFactory
+from .visualization.visualizer_factory import (BarPlot, LinePlot, PiePlot,
+                                               PlotFactory)
 
 __all__ = [
     "DataTransformer",
