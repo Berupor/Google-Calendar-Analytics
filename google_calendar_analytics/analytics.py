@@ -1,10 +1,12 @@
 from datetime import datetime
 
 from google.oauth2.credentials import Credentials  # type: ignore
+import plotly.graph_objs as go
 
 from .collecting.collector import CalendarDataCollector
 from .processing.transformer import DataTransformer
-from .visualization.visualizer_factory import ManyEventPlot, OneEventPlot, PlotFactory
+from .visualization.visualizer_factory import (ManyEventPlot, OneEventPlot,
+                                               PlotFactory)
 
 
 class AnalyzerFacade:
@@ -30,14 +32,14 @@ class AnalyzerFacade:
         self.data_transformer = DataTransformer()
 
     def analyze_one(
-        self,
-        start_time: datetime,
-        end_time: datetime,
-        event_name: str,
-        plot_type: str = "Line",
-        transparent: int = 1,
-        dark_theme: bool = False,
-    ):
+            self,
+            start_time: datetime,
+            end_time: datetime,
+            event_name: str,
+            plot_type: str = "Line",
+            transparency: float = 1.0,
+            dark_theme: bool = False,
+    ) -> go.Figure:
         """
         Analyze the duration of one event and generate a chart.
 
@@ -46,11 +48,13 @@ class AnalyzerFacade:
             event_name (str): The name of the event to be analyzed.
             end_time (datetime): The end time of the time range to analyze.
             start_time (datetime): The start time of the time range to analyze.
-            transparent (int): The transparency of the background. If 0, the background is transparent.
             dark_theme (bool): If True, the chart will be generated with a dark theme.
+            transparency (float): The transparency of the chart.
         """
 
-        plot: OneEventPlot = PlotFactory(plot_type)
+        plot_creator: OneEventPlot = PlotFactory(
+            plot_type, transparency=transparency, dark_theme=dark_theme
+        )
 
         # Collect data for a specific event and calculate its duration
         events = self.data_transformer.one_event_duration(
@@ -59,23 +63,22 @@ class AnalyzerFacade:
             ),
             event_name=event_name,
         )
-        fig = plot.plot(
+        fig = plot_creator.plot(
             events=events,
             event_name=event_name,
-            transparent=transparent,
-            dark_theme=dark_theme,
         )
         return fig
 
     def analyze_many(
-        self,
-        start_time: datetime,
-        end_time: datetime,
-        plot_type: str = "Pie",
-        max_events: int = 5,
-        ascending=False,
-        dark_theme=False,
-    ):
+            self,
+            start_time: datetime,
+            end_time: datetime,
+            plot_type: str = "Pie",
+            max_events: int = 5,
+            transparency: float = 1.0,
+            ascending=False,
+            dark_theme=False,
+    ) -> go.Figure:
         """
         Analyze the durations of multiple events and generate a chart.
 
@@ -86,9 +89,10 @@ class AnalyzerFacade:
             end_time (datetime): The end time of the time range to analyze.
             start_time (datetime): The start time of the time range to analyze.
             dark_theme (bool): If True, the chart will be generated with a dark theme.
+            transparency (float): The transparency of the chart.
         """
 
-        plot: ManyEventPlot = PlotFactory(plot_type)
+        plot_creator: ManyEventPlot = PlotFactory(plot_type, dark_theme, transparency)
 
         # Collect data for the top events and calculate their durations
         events = self.data_transformer.many_events_duration(
@@ -98,5 +102,44 @@ class AnalyzerFacade:
             max_events=max_events,
             ascending=ascending,
         )
-        fig = plot.plot(events=events, dark_theme=dark_theme)
+        fig = plot_creator.plot(events=events)
+        return fig
+
+    def analyze_one_with_periods(
+            self,
+            start_time: datetime,
+            end_time: datetime,
+            event_name: str,
+            period_days: int = 7,
+            num_periods: int = 2,
+            transparency: float = 1.0,
+            dark_theme: bool = False,
+    ) -> go.Figure:
+        """
+        Analyze the duration of one event in multiple periods and generate a chart.
+
+        Args:
+            event_name (str): The name of the event to be analyzed.
+            end_time (datetime): The end time of the time range to analyze.
+            start_time (datetime): The start time of the time range to analyze.
+            period_days (int): The number of days in each period.
+            num_periods (int): The number of periods to analyze.
+            transparency (float): The transparency of the chart.
+            dark_theme (bool): If True, the chart will be generated with a dark theme.
+        """
+
+        plot_creator: OneEventPlot = PlotFactory(
+            "MultyLine", transparency=transparency, dark_theme=dark_theme
+        )
+
+        # Collect data for a specific event and calculate its duration
+        events = self.data_transformer.event_duration_periods(
+            events=self.data_collector.collect_data(
+                start_time=start_time, end_time=end_time
+            ),
+            event_name=event_name,
+            period_days=period_days,
+            num_periods=num_periods,
+        )
+        fig = plot_creator.plot(events=events, event_name=event_name)
         return fig
