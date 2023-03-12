@@ -17,7 +17,7 @@ class TestPlots(unittest.TestCase):
             {"Event": ["A", "B", "C", "D"], "Duration": [10, 20, 30, 40]}
         )
 
-    def test_pie_plot(self):
+    async def test_pie_plot(self):
         plot = PiePlot()
         fig = plot.plot(self.df, title="Pie Chart Title")
         self.assertIsInstance(fig, go.Figure)
@@ -25,7 +25,7 @@ class TestPlots(unittest.TestCase):
         self.assertEqual(fig.layout.width, 800)
         self.assertEqual(fig.layout.height, 400)
 
-    def test_bar_plot(self):
+    async def test_bar_plot(self):
         plot = BarPlot()
         fig = plot.plot(self.df, "Bar Chart Title")
         self.assertIsInstance(fig, go.Figure)
@@ -33,7 +33,7 @@ class TestPlots(unittest.TestCase):
         self.assertEqual(fig.layout.width, 800)
         self.assertEqual(fig.layout.height, 400)
 
-    def test_line_plot(self):
+    async def test_line_plot(self):
         df = pd.DataFrame(
             {
                 "Date": pd.date_range(start="2022-01-01", periods=10, freq="D"),
@@ -47,7 +47,7 @@ class TestPlots(unittest.TestCase):
         self.assertEqual(fig.layout.width, 800)
         self.assertEqual(fig.layout.height, 400)
 
-    def test_plot_factory(self):
+    async def test_plot_factory(self):
         plot1 = PlotFactory("Pie")
         plot2 = PlotFactory("Bar")
         plot3 = PlotFactory("Line")
@@ -55,6 +55,6 @@ class TestPlots(unittest.TestCase):
         self.assertIsInstance(plot2, BarPlot)
         self.assertIsInstance(plot3, LinePlot)
 
-    def test_invalid_plot_type(self):
+    async def test_invalid_plot_type(self):
         with self.assertRaises(ValueError):
             plot = PlotFactory("invalid_type")

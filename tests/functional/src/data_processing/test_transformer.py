@@ -2,14 +2,14 @@ import unittest
 
 import pandas as pd
 
-from google_calendar_analytics.processing.transformer import DataTransformer
+from google_calendar_analytics.processing.transformer import AsyncDataTransformer
 
 
 class DataTransformerTest(unittest.TestCase):
     def setUp(self):
-        self.transformer = DataTransformer()
+        self.transformer = AsyncDataTransformer()
 
-    def test__get_duration(self):
+    async def test__get_duration(self):
         start_time = "2022-02-18T09:00:00+00:00"
         end_time = "2022-02-18T10:30:00+00:00"
         expected_duration = 1.5
@@ -17,7 +17,7 @@ class DataTransformerTest(unittest.TestCase):
 
         self.assertAlmostEqual(duration, expected_duration, delta=0.01)
 
-    def test_many_events_duration(self):
+    async def test_many_events_duration(self):
         events = [
             {
                 "start": {"dateTime": "2022-02-18T09:00:00+00:00"},
@@ -47,7 +47,7 @@ class DataTransformerTest(unittest.TestCase):
 
         pd.testing.assert_frame_equal(output, expected_output)
 
-    def test_one_event_duration(self):
+    async def test_one_event_duration(self):
         events = [
             {
                 "start": {"dateTime": "2022-02-18T09:00:00+00:00"},
