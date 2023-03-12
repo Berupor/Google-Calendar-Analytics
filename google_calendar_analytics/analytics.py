@@ -1,10 +1,10 @@
 from datetime import datetime
 
-from google.oauth2.credentials import Credentials  # type: ignore
 import plotly.graph_objs as go
+from google.oauth2.credentials import Credentials  # type: ignore
 
-from .collecting.collector import CalendarDataCollector
-from .processing.transformer import DataTransformer
+from .collecting.collector import AsyncCalendarDataCollector
+from .processing.transformer import AsyncDataTransformer
 from .visualization.visualizer_factory import (ManyEventPlot, OneEventPlot,
                                                PlotFactory)
 
@@ -21,24 +21,24 @@ class AnalyzerFacade:
         creds (Credentials): An instance of the Credentials class.
 
     Attributes:
-        data_collector (CalendarDataCollector): An instance of the CalendarDataCollector class.
+        data_collector (AsyncCalendarDataCollector): An instance of the CalendarDataCollector class.
         data_transformer (DataTransformer): An instance of the DataTransformer class.
     """
 
     def __init__(self, creds: Credentials):
         self.creds = creds
 
-        self.data_collector = CalendarDataCollector(creds)
-        self.data_transformer = DataTransformer()
+        self.data_collector = AsyncCalendarDataCollector(creds)
+        self.data_transformer = AsyncDataTransformer()
 
-    def analyze_one(
-            self,
-            start_time: datetime,
-            end_time: datetime,
-            event_name: str,
-            plot_type: str = "Line",
-            transparency: float = 1.0,
-            dark_theme: bool = False,
+    async def analyze_one(
+        self,
+        start_time: datetime,
+        end_time: datetime,
+        event_name: str,
+        plot_type: str = "Line",
+        transparency: float = 1.0,
+        dark_theme: bool = False,
     ) -> go.Figure:
         """
         Analyze the duration of one event and generate a chart.
@@ -52,32 +52,30 @@ class AnalyzerFacade:
             transparency (float): The transparency of the chart.
         """
 
-        plot_creator: OneEventPlot = PlotFactory(
+        # Create plot object
+        plot_creator: OneEventPlot = await PlotFactory(
             plot_type, transparency=transparency, dark_theme=dark_theme
         )
 
         # Collect data for a specific event and calculate its duration
-        events = self.data_transformer.one_event_duration(
-            events=self.data_collector.collect_data(
-                start_time=start_time, end_time=end_time
-            ),
-            event_name=event_name,
+        calendar_events = await self.data_collector.collect_data(
+            start_time=start_time, end_time=end_time
         )
-        fig = plot_creator.plot(
-            events=events,
-            event_name=event_name,
+        event_durations = await self.data_transformer.one_event_duration(
+            events=calendar_events, event_name=event_name
         )
-        return fig
 
-    def analyze_many(
-            self,
-            start_time: datetime,
-            end_time: datetime,
-            plot_type: str = "Pie",
-            max_events: int = 5,
-            transparency: float = 1.0,
-            ascending=False,
-            dark_theme=False,
+        return await plot_creator.plot(events=event_durations, event_name=event_name)
+
+    async def analyze_many(
+        self,
+        start_time: datetime,
+        end_time: datetime,
+        plot_type: str = "Pie",
+        max_events: int = 5,
+        transparency: float = 1.0,
+        ascending=False,
+        dark_theme=False,
     ) -> go.Figure:
         """
         Analyze the durations of multiple events and generate a chart.
@@ -92,28 +90,34 @@ class AnalyzerFacade:
             transparency (float): The transparency of the chart.
         """
 
-        plot_creator: ManyEventPlot = PlotFactory(plot_type, dark_theme, transparency)
+        plot_creator: ManyEventPlot = await PlotFactory(
+            plot_type=plot_type,
+            dark_theme=dark_theme,
+            transparency=transparency,
+        )
 
         # Collect data for the top events and calculate their durations
-        events = self.data_transformer.many_events_duration(
-            events=self.data_collector.collect_data(
-                start_time=start_time, end_time=end_time
-            ),
+        calendar_events = await self.data_collector.collect_data(
+            start_time=start_time,
+            end_time=end_time,
+        )
+        event_durations = await self.data_transformer.many_events_duration(
+            events=calendar_events,
             max_events=max_events,
             ascending=ascending,
         )
-        fig = plot_creator.plot(events=events)
-        return fig
 
-    def analyze_one_with_periods(
-            self,
-            start_time: datetime,
-            end_time: datetime,
-            event_name: str,
-            period_days: int = 7,
-            num_periods: int = 2,
-            transparency: float = 1.0,
-            dark_theme: bool = False,
+        return await plot_creator.plot(events=event_durations)
+
+    async def analyze_one_with_periods(
+        self,
+        start_time: datetime,
+        end_time: datetime,
+        event_name: str,
+        period_days: int = 7,
+        num_periods: int = 2,
+        transparency: float = 1.0,
+        dark_theme: bool = False,
     ) -> go.Figure:
         """
         Analyze the duration of one event in multiple periods and generate a chart.
@@ -128,18 +132,21 @@ class AnalyzerFacade:
             dark_theme (bool): If True, the chart will be generated with a dark theme.
         """
 
-        plot_creator: OneEventPlot = PlotFactory(
-            "MultyLine", transparency=transparency, dark_theme=dark_theme
+        # Create the plot object
+        plot_type = "MultyLine"
+        plot_creator = await PlotFactory(
+            plot_type, transparency=transparency, dark_theme=dark_theme
         )
 
-        # Collect data for a specific event and calculate its duration
-        events = self.data_transformer.event_duration_periods(
-            events=self.data_collector.collect_data(
-                start_time=start_time, end_time=end_time
-            ),
+        # Collect data for the event duration periods
+        calendar_events = await self.data_collector.collect_data(
+            start_time=start_time, end_time=end_time
+        )
+        event_durations = await self.data_transformer.event_duration_periods(
+            events=calendar_events,
             event_name=event_name,
             period_days=period_days,
             num_periods=num_periods,
         )
-        fig = plot_creator.plot(events=events, event_name=event_name)
-        return fig
+
+        return await plot_creator.plot(events=event_durations, event_name=event_name)
