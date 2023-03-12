@@ -7,6 +7,7 @@ which events take up the most time.
 
 ## Features
 
+- Async support for faster data retrieval and chart generation
 - Extract events from your Google Calendar
 - Compute the total duration of events in a specified time range
 - Visualize the duration of events in a pie chart, bar chart, line chart and more
@@ -23,13 +24,16 @@ pip install google-calendar-analytics
 
 You can then import the AnalyzerFacade class and create an instance with your Google Calendar credentials:
 
+[How to get credentials from Google?](https://developers.google.com/calendar/api/quickstart/python)
 ```python
+import asyncio
 from datetime import datetime
-from google.oauth2.credentials import Credentials
 
+from google.oauth2.credentials import Credentials
 from google_calendar_analytics import AnalyzerFacade
 
-# Example of creds dictionary. (You can get it from Google OAuth2 in you web app)
+# (You can get it from Google OAuth2 in you web app or from link above)
+# Example of creds dictionary. 
 creds = {
     "token": "ya29.a0AVvZVsoH4qZcrGK25VwsXspJv-r9K-",
     "refresh_token": "1//0hwlhrtalKgeRCgYIARAAGBESNwF-",
@@ -48,25 +52,36 @@ Once you have an AnalyzerFacade instance, you can use its analyze_one and analyz
 example, to analyze a single event and generate a chart, you can use the following code:
 
 ```python
-start_time = datetime(2023, 2, 1)
-end_time = datetime(2023, 2, 15)
+async def main():
+    start_time = datetime(2023, 2, 1)
+    end_time = datetime(2023, 2, 15)
 
-event_name = "Meeting"
-plot_type = "Line"
-fig = analyzer.analyze_one(start_time, end_time, event_name, plot_type)
-fig.show()
+    event_name = "Meeting"
+    plot_type = "Line"
+    
+    return await analyzer.analyze_one(start_time, end_time, event_name, plot_type)
+
+
+if __name__ == "__main__":
+    plot = asyncio.run(main())
+    plot.show()
 ```
 
 To analyze multiple events and generate a chart, you can use the following code:
 
 ```python
-start_time = datetime(2023, 2, 1)
-end_time = datetime(2023, 2, 15)
+async def main():
+    start_time = datetime(2023, 2, 1)
+    end_time = datetime(2023, 2, 15)
 
-max_events = 5
-plot_type = "Pie"
-fig = analyzer.analyze_many(start_time, end_time, plot_type, max_events)
-fig.show()
+    max_events = 5
+    plot_type = "Pie"
+    
+    return await analyzer.analyze_many(start_time, end_time, plot_type, max_events)
+
+if __name__ == "__main__":
+    plot = asyncio.run(main())
+    plot.show()
 ```
 
 ## Contribution
