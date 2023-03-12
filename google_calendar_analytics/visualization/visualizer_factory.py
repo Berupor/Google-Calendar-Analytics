@@ -28,10 +28,10 @@ class ManyEventPlot(Plot):
         super().__init__(**kwargs)
 
     @abstractmethod
-    def plot(
-            self,
-            events: pd.DataFrame,
-            title: str = "Title",
+    async def plot(
+        self,
+        events: pd.DataFrame,
+        title: str = "Title",
     ):
         """
         Analyze one event for a certain period of time.
@@ -43,10 +43,10 @@ class OneEventPlot(Plot):
         super().__init__(**kwargs)
 
     @abstractmethod
-    def plot(
-            self,
-            events: pd.DataFrame,
-            event_name: str,
+    async def plot(
+        self,
+        events: pd.DataFrame,
+        event_name: str,
     ):
         """
         Analyze one event for a certain period of time.
@@ -54,10 +54,10 @@ class OneEventPlot(Plot):
 
 
 class PiePlot(ManyEventPlot):
-    def plot(
-            self,
-            events: pd.DataFrame,
-            title: str = "Top events with the Longest Duration",
+    async def plot(
+        self,
+        events: pd.DataFrame,
+        title: str = "Top events with the Longest Duration",
     ) -> go.Figure:
         """
         Plot a pie chart of the event durations.
@@ -93,10 +93,10 @@ class PiePlot(ManyEventPlot):
 
 
 class BarPlot(ManyEventPlot):
-    def plot(
-            self,
-            events: pd.DataFrame,
-            title: str = "Top events with the Longest Duration",
+    async def plot(
+        self,
+        events: pd.DataFrame,
+        title: str = "Top events with the Longest Duration",
     ) -> go.Figure:
         """
         Plot a bar chart of the event durations.
@@ -137,10 +137,10 @@ class BarPlot(ManyEventPlot):
 
 
 class LinePlot(OneEventPlot):
-    def plot(
-            self,
-            events: pd.DataFrame,
-            event_name: str,
+    async def plot(
+        self,
+        events: pd.DataFrame,
+        event_name: str,
     ) -> go.Figure:
         """
         Plot a line chart of the event durations.
@@ -199,10 +199,10 @@ class LinePlot(OneEventPlot):
 
 
 class MultyLinePlot(OneEventPlot):
-    def plot(
-            self,
-            events: pd.DataFrame,
-            event_name: str,
+    async def plot(
+        self,
+        events: pd.DataFrame,
+        event_name: str,
     ) -> go.Figure:
         """
         Plot a line chart of the event durations.
@@ -243,7 +243,6 @@ class MultyLinePlot(OneEventPlot):
                 title="Day",
                 showgrid=True,
                 gridwidth=0.2,
-                gridcolor=self.font_color,
                 dtick="D5",
                 titlefont=dict(size=14, color=self.font_color),
                 tickfont=dict(size=12, color=self.font_color),
@@ -253,7 +252,6 @@ class MultyLinePlot(OneEventPlot):
                 title="Duration (hours)",
                 showgrid=True,
                 gridwidth=0.2,
-                gridcolor=self.font_color,
                 titlefont=dict(size=14, color=self.font_color),
                 tickfont=dict(size=12, color=self.font_color),
             ),
@@ -266,7 +264,7 @@ class MultyLinePlot(OneEventPlot):
         return fig
 
 
-def PlotFactory(plot_type="Pie", dark_theme=False, transparency=1):
+async def PlotFactory(plot_type="Pie", dark_theme=False, transparency=1):
     """
     Factory method to create a plot object.
 
