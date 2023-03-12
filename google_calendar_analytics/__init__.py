@@ -8,19 +8,20 @@
 from ._version import __version__
 from .analytics import AnalyzerFacade
 from .authentication.auth import CalendarAuth
-from .collecting.collector import CalendarDataCollector
-from .processing.transformer import DataTransformer
+from .collecting.collector import AsyncCalendarDataCollector
+from .processing.transformer import AsyncDataTransformer
 from .visualization.visualizer_factory import (BarPlot, LinePlot, PiePlot,
-                                               PlotFactory)
+                                               PlotFactory, MultyLinePlot)
 
 __all__ = [
-    "DataTransformer",
+    "AsyncDataTransformer",
     "PlotFactory",
     "PiePlot",
     "BarPlot",
     "CalendarAuth",
     "LinePlot",
-    "CalendarDataCollector",
+    "MultyLinePlot",
+    "AsyncCalendarDataCollector",
     "AnalyzerFacade",
 ]
 
