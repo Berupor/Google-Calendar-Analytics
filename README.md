@@ -1,3 +1,8 @@
+[![PyPi Package Version](https://img.shields.io/pypi/v/google-calendar-analytics.svg)](https://pypi.org/project/google-calendar-analytics/)
+[![PyPi status](https://img.shields.io/pypi/status/google-calendar-analytics.svg?style=flat-square)](https://pypi.python.org/pypi/google-calendar-analytics)
+[![PyPi downloads](https://img.shields.io/pypi/dm/google-calendar-analytics.svg)](https://pypi.org/project/google-calendar-analytics/)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/google-calendar-analytics.svg)](https://pypi.python.org/pypi/google-calendar-analytics)
+
 # Google Calendar Analytics
 
 ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/Logo.png?raw=true)
