@@ -1,0 +1,39 @@
+site_name: Google Calendar Analytics Documentation
+
+theme:
+  name: "material"
+  favicon: https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/512px-Google_Calendar_icon_%282020%29.svg.png?20221106121915
+  logo: https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/512px-Google_Calendar_icon_%282020%29.svg.png?20221106121915
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    - scheme: slate
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+
+repo_url: https://github.com/Berupor/Calendar-Analytics
+repo_name: Berupor/Calendar-Analytics
+
+mkdocstrings:
+    default_handler: crystal
+    watch: [src]
+
+nav:
+  - Analytics Docs: index.md
+  - Getting-started.md
+  - Customization.md
+  - Credentials.md
+  - References.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
