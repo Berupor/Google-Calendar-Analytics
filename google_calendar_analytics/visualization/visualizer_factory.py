@@ -1,3 +1,14 @@
+"""
+# **VisualizerFactory**
+
+This module provides classes for generating visualizations of event data
+using Pandas and Plotly libraries. It includes classes for bar charts,
+pie charts, and line charts of event durations, as well as multiple line charts
+for events over multiple periods. The Plot class defines some common properties
+for all visualization classes, while the ManyEventPlot and OneEventPlot classes
+define required abstract methods. The factory method PlotFactory returns an object
+of the specified visualization class based on input parameters.
+"""
 from abc import ABC, abstractmethod
 
 import pandas as pd
@@ -9,7 +20,7 @@ class Plot(ABC):
     FIG_SIZE = {"width": 800, "height": 400}
     COLORS = px.colors.qualitative.Pastel
 
-    def __init__(self, dark_theme=False, transparency=1.0):
+    def __init__(self, dark_theme=False, transparency=1.0, **kwargs):
         self.dark_theme = dark_theme
         self.transparency = transparency
 
@@ -58,6 +69,7 @@ class PiePlot(ManyEventPlot):
         self,
         events: pd.DataFrame,
         title: str = "Top events with the Longest Duration",
+        **kwargs,
     ) -> go.Figure:
         """
         Plot a pie chart of the event durations.
@@ -97,6 +109,7 @@ class BarPlot(ManyEventPlot):
         self,
         events: pd.DataFrame,
         title: str = "Top events with the Longest Duration",
+        **kwargs,
     ) -> go.Figure:
         """
         Plot a bar chart of the event durations.
@@ -141,6 +154,7 @@ class LinePlot(OneEventPlot):
         self,
         events: pd.DataFrame,
         event_name: str,
+        **kwargs,
     ) -> go.Figure:
         """
         Plot a line chart of the event durations.
@@ -199,11 +213,7 @@ class LinePlot(OneEventPlot):
 
 
 class MultyLinePlot(OneEventPlot):
-    async def plot(
-        self,
-        events: pd.DataFrame,
-        event_name: str,
-    ) -> go.Figure:
+    async def plot(self, events: pd.DataFrame, event_name: str, **kwargs) -> go.Figure:
         """
         Plot a line chart of the event durations.
 
@@ -264,7 +274,9 @@ class MultyLinePlot(OneEventPlot):
         return fig
 
 
-async def PlotFactory(plot_type="Pie", dark_theme=False, transparency=1):
+async def PlotFactory(
+    plot_type="Pie", dark_theme=False, transparency=1, event_name="Event"
+) -> Plot:
     """
     Factory method to create a plot object.
 
@@ -272,6 +284,7 @@ async def PlotFactory(plot_type="Pie", dark_theme=False, transparency=1):
         plot_type (str): The type of plot to create.
         dark_theme (bool): Whether to use a dark theme or not.
         transparency (float): The transparency of the chart.
+        event_name (str): The name of the event.
     """
 
     plots = {
@@ -287,4 +300,6 @@ async def PlotFactory(plot_type="Pie", dark_theme=False, transparency=1):
             f"Available options are: {', '.join(plots.keys())}."
         )
 
-    return plots[plot_type](dark_theme=dark_theme, transparency=transparency)
+    return plots[plot_type](
+        dark_theme=dark_theme, transparency=transparency, event_name=event_name
+    )

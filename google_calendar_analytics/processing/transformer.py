@@ -1,40 +1,71 @@
 import datetime
+from abc import ABC, abstractmethod
 
 import pandas as pd
+import exceptions
 
 
-class AsyncDataTransformer:
+class EventDurationStrategy(ABC):
+    """
+    Abstract base class for event duration strategies.
+    """
+
+    @abstractmethod
+    async def calculate_duration(
+        self, events: list[dict], *args, **kwargs
+    ) -> pd.DataFrame:
+        """
+        Calculate event durations.
+
+        Args:
+            events (list[dict]): List of event dictionaries.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            pandas.DataFrame: Dataframe containing event durations.
+
+        Raises:
+            NotImplementedError: If the method is not implemented by the subclass.
+        """
+
+        pass
+
     async def _get_duration(self, start, end) -> float:
         """
-        A method to calculate the duration of an event
-        """
+        Calculate the duration between two dates in hours.
 
+        Args:
+            start (str): ISO-formatted start date.
+            end (str): ISO-formatted end date.
+
+        Returns:
+            float: Duration between start and end dates in hours.
+        """
         start_time = datetime.datetime.fromisoformat(start)
         end_time = datetime.datetime.fromisoformat(end)
         duration = end_time - start_time
         return round(duration.total_seconds() / 3600, 2)
 
-    async def many_events_duration(
+
+class ManyEventsDurationStrategy(EventDurationStrategy):
+    """
+    A strategy for calculating the duration of many events.
+
+    Args:
+        EventDurationStrategy (ABC): Abstract base class for event duration strategies.
+    """
+
+    async def calculate_duration(  # type: ignore
         self, events: list[dict], max_events: int = 5, ascending=False
     ) -> pd.DataFrame:
-        """
-        A method to calculate the duration of multiple events and return
-        a DataFrame with the top events
-
-        Args:
-            events (list[dict]): A list of events
-            max_events (int): The maximum number of events to be analyzed.
-            ascending (bool): If True, sort the events in ascending order of duration
-        """
-        event_durations: dict[str, float] = {}
+        event_durations = {}  # type: ignore
 
         for event in events:
-            # Get the start and end times in ISO format
             start, end = event.get("start", {}).get("dateTime"), event.get(
                 "end", {}
             ).get("dateTime")
 
-            # If start and end times exist, calculate the duration and update the event durations dictionary
             if start and end:
                 summary = event["summary"]
                 duration = await self._get_duration(start, end)
@@ -46,17 +77,16 @@ class AsyncDataTransformer:
 
         return pd.DataFrame({"Event": top_events.index, "Duration": top_events.values})
 
-    async def one_event_duration(
-        self, events: list[dict], event_name: str
-    ) -> pd.DataFrame:
-        """
-        A method to calculate the duration of one event and return
-        a DataFrame with the durations for each day
 
-        Args:
-            events (list[dict]): A list of events
-            event_name (str): The name of the event to be analyzed
-        """
+class OneEventDurationStrategy(EventDurationStrategy):
+    """
+    A strategy for calculating the duration of a single event.
+
+    Args:
+        EventDurationStrategy (ABC): Abstract base class for event duration strategies.
+    """
+
+    async def calculate_duration(self, events: list[dict], event_name: str) -> pd.DataFrame:  # type: ignore
         one_event: dict[str, float] = {}
         for event in events:
             if event["summary"] == event_name:
@@ -67,25 +97,25 @@ class AsyncDataTransformer:
 
         return pd.DataFrame(one_event.items(), columns=["Date", "Duration"])
 
-    async def event_duration_periods(
+
+class EventDurationPeriodsStrategy(EventDurationStrategy):
+    """
+    A strategy for calculating the duration of events in periods.
+
+    Args:
+        EventDurationStrategy (ABC): Abstract base class for event duration strategies.
+    """
+
+    async def calculate_duration(  # type: ignore
         self,
         events: list[dict],
         event_name: str,
         period_days: int,
         num_periods: int,
     ) -> pd.DataFrame:
-        """
-        A method to calculate the duration of one event
-        in multiple periods and return a DataFrame with the durations for each day
-
-        Args:
-            events (list[dict]): A list of events
-            event_name (str): The name of the event to be analyzed
-            period_days (int): The number of days in each period
-            num_periods (int): The number of periods to be analyzed
-        """
         period_duration = datetime.timedelta(days=period_days)
         periods = []
+
         for i in range(num_periods):
             period_end = (
                 datetime.datetime.now().date()
@@ -115,4 +145,28 @@ class AsyncDataTransformer:
                                 "Duration": duration,
                                 "Period": period_index,
                             }
-                            return pd.DataFrame(list(event_duration.values()))
+        expected_data_points = num_periods * period_days
+        available_data_points = len(event_duration)
+
+        if available_data_points < expected_data_points:
+            raise exceptions.NotEnoughDataError(
+                expected_data_points, available_data_points
+            )
+
+        return pd.DataFrame(list(event_duration.values()))
+
+
+class AsyncDataTransformer:
+    def __init__(self):
+        self.strategy: EventDurationStrategy = None  # type: ignore
+
+    def set_strategy(self, strategy: EventDurationStrategy) -> None:
+        self.strategy = strategy
+
+    async def calculate_duration(
+        self, events: list[dict], *args, **kwargs
+    ) -> pd.DataFrame:
+        if not self.strategy:
+            raise ValueError("Strategy is not set")
+
+        return await self.strategy.calculate_duration(events, *args, **kwargs)
