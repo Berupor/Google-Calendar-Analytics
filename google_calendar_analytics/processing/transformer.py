@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 import pandas as pd
 
-from core import exceptions
+from google_calendar_analytics.core import exceptions
 
 
 class EventDurationStrategy(ABC):
