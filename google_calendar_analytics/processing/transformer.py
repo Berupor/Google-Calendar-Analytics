@@ -1,8 +1,10 @@
 import datetime
 from abc import ABC, abstractmethod
 
+import numpy as np
 import pandas as pd
-import exceptions
+
+from core import exceptions
 
 
 class EventDurationStrategy(ABC):
@@ -45,7 +47,7 @@ class EventDurationStrategy(ABC):
         start_time = datetime.datetime.fromisoformat(start)
         end_time = datetime.datetime.fromisoformat(end)
         duration = end_time - start_time
-        return round(duration.total_seconds() / 3600, 2)
+        return np.round(duration.total_seconds() / 3600, 2)
 
 
 class ManyEventsDurationStrategy(EventDurationStrategy):
