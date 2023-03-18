@@ -6,6 +6,13 @@
 # Google Calendar Analytics
 
 ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/Logo.png?raw=true)
+
+---
+
+- ### [Documentation](https://berupor.github.io/Calendar-Analytics/)
+- ### [Source code](https://github.com/Berupor/Calendar-Analytics)
+
+---
 This Python program allows you to perform analytics on your Google Calendar events. With this program, you can visualize
 the total duration of your events, compare the length of events across different time periods, and gain insights into
 which events take up the most time.
@@ -19,23 +26,26 @@ which events take up the most time.
 - Limit the number of events displayed in the charts
 - Wide chart customization. For example, dark mode and transparent background
 
-## Usage
-
+## Quick Start
 To use the Google Calendar Analytics program, first install the dependencies by running the following command:
 
 ```bash
 pip install google-calendar-analytics
 ```
 
-You can then import the AnalyzerFacade class and create an instance with your Google Calendar credentials:
+You can then import the AnalyzerFacade and Analyzer builder classs and create an instances with your Google Calendar
+credentials:
 
-[How to get credentials from Google?](https://developers.google.com/calendar/api/quickstart/python)
+
+### How to get credentials from Google?
+1. [Google documentation](https://developers.google.com/calendar/api/quickstart/python)
+
 ```python
 import asyncio
 from datetime import datetime
 
 from google.oauth2.credentials import Credentials
-from google_calendar_analytics import AnalyzerFacade
+from google_calendar_analytics import AnalyzerFacade, AnalyzerBuilder
 
 # (You can get it from Google OAuth2 in you web app or from link above)
 # Example of creds dictionary. (You can get it from Google OAuth2 in your web app)
@@ -48,46 +58,28 @@ creds = {
     "scopes": ["https://www.googleapis.com/auth/calendar"],
     "expiry": "2023-02-18T15:30:15.674219Z"
 }
-
 creds = Credentials.from_authorized_user_info(creds)
-analyzer = AnalyzerFacade(creds=creds)
 ```
 
-Once you have an AnalyzerFacade instance, you can use its analyze_one and analyze_many methods to generate charts. For
-example, to analyze a single event and generate a chart, you can use the following code:
+Once you have created the credentials, you can create an instance of the AnalyzerFacade with AnalyzerBuilder class and
+use it to analyze your calendar:
 
 ```python
-async def main():
-    start_time = datetime(2023, 2, 1)
-    end_time = datetime(2023, 2, 15)
+analyzer = (
+    AnalyzerBuilder()
+    .with_credentials(creds)
+    .with_plot_type("Bar")
+    .build()
+)
 
-    event_name = "Meeting"
-    plot_type = "Line"
-    
-    return await analyzer.analyze_one(start_time, end_time, event_name, plot_type)
+# Choose time range for analysis
+start_time = datetime(2023, 3, 1)
+end_time = datetime(2023, 3, 18)
 
-
-if __name__ == "__main__":
-    plot = asyncio.run(main())
-    plot.show()
+plot = await analyzer.analyze_one(start_time, end_time, event_name="Programming")
+plot.show()
 ```
 
-To analyze multiple events and generate a chart, you can use the following code:
-
-```python
-async def main():
-    start_time = datetime(2023, 2, 1)
-    end_time = datetime(2023, 2, 15)
-
-    max_events = 5
-    plot_type = "Pie"
-    
-    return await analyzer.analyze_many(start_time, end_time, plot_type, max_events)
-
-if __name__ == "__main__":
-    plot = asyncio.run(main())
-    plot.show()
-```
 
 ## Contribution
 
