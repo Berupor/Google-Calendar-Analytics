@@ -6,23 +6,31 @@
 """
 
 from ._version import __version__
-from .analytics import AnalyzerFacade
+from .analytics import AnalyzerBuilder, AnalyzerFacade
 from .authentication.auth import CalendarAuth
 from .collecting.collector import AsyncCalendarDataCollector
-from .processing.transformer import AsyncDataTransformer
-from .visualization.visualizer_factory import (BarPlot, LinePlot, PiePlot,
-                                               PlotFactory, MultyLinePlot)
+from .processing.transformer import (AsyncDataTransformer,
+                                     EventDurationPeriodsStrategy,
+                                     ManyEventsDurationStrategy,
+                                     OneEventDurationStrategy)
+from .visualization.visualizer_factory import (BarPlot, LinePlot,
+                                               MultyLinePlot, PiePlot,
+                                               PlotFactory)
 
 __all__ = [
+    "AnalyzerBuilder",
+    "AnalyzerFacade",
+    "AsyncCalendarDataCollector",
     "AsyncDataTransformer",
-    "PlotFactory",
-    "PiePlot",
     "BarPlot",
     "CalendarAuth",
+    "EventDurationPeriodsStrategy",
     "LinePlot",
+    "ManyEventsDurationStrategy",
     "MultyLinePlot",
-    "AsyncCalendarDataCollector",
-    "AnalyzerFacade",
+    "OneEventDurationStrategy",
+    "PiePlot",
+    "PlotFactory",
 ]
 
 __author__ = "Berupor"
