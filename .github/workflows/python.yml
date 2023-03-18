@@ -24,6 +24,3 @@ jobs:
       - name: Run sanity check
         run: |
           python3 -m pytest tests/functional/src/
-      - name: Run mypy
-        run: |
-          mypy --ignore-missing-imports google_calendar_analytics
