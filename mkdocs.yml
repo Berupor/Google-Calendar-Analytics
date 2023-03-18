@@ -22,6 +22,9 @@ mkdocstrings:
     default_handler: crystal
     watch: [src]
 
+plugins:
+  - mkdocstrings
+
 nav:
   - Analytics Docs: index.md
   - Getting-started.md
