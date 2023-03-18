@@ -9,5 +9,10 @@ pandas==1.5.3
 mypy==1.0.1
 pytest==7.2.1
 flake8==6.0.0
+mkdocs
+mkdocs-extensions
+mkdocstrings
+mkdocs-material
+pytest-asyncio
 black
 isort
