@@ -4,18 +4,18 @@ from io import open
 
 from setuptools import find_packages, setup
 
-from google_calendar_analytics._version import __version__
-
 """
 :authors: Berupor
 :license: MIT
 :copyright: (c) 2023 Berupor
 """
 
-version = __version__
+version = "0.3.1"
 
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
+
+REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()]
 
 setup(
     name="google_calendar_analytics",
@@ -29,16 +29,8 @@ setup(
     download_url=f"https://github.com/Berupor/Calendar-Analytics/archive/refs/tags/v{version}-alpha.zip",
     license="MIT",
     packages=find_packages(),
-    install_requires=[
-        "pandas==1.5.3",
-        "google-auth==2.16.0",
-        "google-api-python-client==2.77.0",
-        "google-auth-httplib2==0.1.0",
-        "google-auth-oauthlib==1.0.0",
-        "plotly==5.13.0",
-        "kaleido==0.2.1",
-        "setuptools~=60.2.0"
-    ],
+    install_requires=REQUIREMENTS,
+    setup_requires=REQUIREMENTS,
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",

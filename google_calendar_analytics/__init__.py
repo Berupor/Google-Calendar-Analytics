@@ -5,7 +5,7 @@
 :copyright: (c) 2023 Berupor
 """
 
-from ._version import __version__
+from ._version import __version__ as version
 from .analytics import AnalyzerBuilder, AnalyzerFacade
 from .authentication.auth import CalendarAuth
 from .collecting.collector import AsyncCalendarDataCollector
@@ -34,5 +34,5 @@ __all__ = [
 ]
 
 __author__ = "Berupor"
-__version__ = __version__
+__version__ = version
 __email__ = "evgeniy.zelenoff@gmail.com"
