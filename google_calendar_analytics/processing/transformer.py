@@ -63,6 +63,7 @@ class ManyEventsDurationStrategy(EventDurationStrategy):
     ) -> pd.DataFrame:
         event_durations = {}  # type: ignore
 
+
         for event in events:
             start, end = event.get("start", {}).get("dateTime"), event.get(
                 "end", {}

@@ -9,7 +9,7 @@ class AsyncCalendarDataCollector:
     """A class to collect data from a Google Calendar."""
 
     def __init__(self, creds):
-        self.service = build("calendar", "v3", credentials=creds, cache_discovery=False)
+        self.service = build("calendar", "v3", credentials=creds, cache_discovery=True)
 
     async def _get_events_by_time_range(
         self,
@@ -21,6 +21,7 @@ class AsyncCalendarDataCollector:
         """Helper function to retrieve events in a specific time range."""
         request = self.service.events().list(
             calendarId=calendar_id,
+
             timeMin=time_min,
             timeMax=time_max,
             singleEvents=True,

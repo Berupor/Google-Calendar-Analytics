@@ -27,6 +27,7 @@ from .processing.transformer import (AsyncDataTransformer,
                                      ManyEventsDurationStrategy,
                                      OneEventDurationStrategy)
 from .visualization.visualizer_factory import PlotFactory
+from .core import exceptions
 
 
 class AnalyzerFacade:
@@ -97,7 +98,7 @@ class AnalyzerFacade:
         self.data_transformer = AsyncDataTransformer()
 
     async def analyze_one(
-        self, start_time: datetime, end_time: datetime, event_name: str, **kwargs
+            self, start_time: datetime, end_time: datetime, event_name: str, **kwargs
     ) -> go.Figure:
         """
         Analyze a single event and generate a plot.
@@ -127,6 +128,9 @@ class AnalyzerFacade:
             plot = await analyzer.analyze_one(start_time, end_time, event_name)
             ```
         """
+        if self.plot_type not in ("Line", ):
+            raise exceptions.InvalidPlotTypeError(self.plot_type, method="analyze_one")
+
         self.data_transformer.set_strategy(OneEventDurationStrategy())
         return await self._analyze(
             start_time=start_time,
@@ -136,7 +140,7 @@ class AnalyzerFacade:
         )
 
     async def analyze_many(
-        self, start_time: datetime, end_time: datetime, **kwargs
+            self, start_time: datetime, end_time: datetime, **kwargs
     ) -> go.Figure:
         """
         Analyze multiple calendar events and generate a plot of their durations.
@@ -161,6 +165,9 @@ class AnalyzerFacade:
             fig.show()
             ```
         """
+        if self.plot_type not in ("Bar", "Pie"):
+            raise exceptions.InvalidPlotTypeError(self.plot_type, method="analyze_many")
+
         self.data_transformer.set_strategy(ManyEventsDurationStrategy())
         return await self._analyze(
             start_time=start_time,
@@ -169,13 +176,13 @@ class AnalyzerFacade:
         )
 
     async def analyze_one_with_periods(
-        self,
-        start_time: datetime,
-        end_time: datetime,
-        event_name: str,
-        period_days: int = 7,
-        num_periods: int = 2,
-        **kwargs
+            self,
+            start_time: datetime,
+            end_time: datetime,
+            event_name: str,
+            period_days: int = 7,
+            num_periods: int = 2,
+            **kwargs
     ) -> go.Figure:
         """
         Analyze a single event over multiple periods of time and generate a plot.
@@ -209,6 +216,9 @@ class AnalyzerFacade:
             plot = await analyzer.analyze_one_with_periods(start_time, end_time, event_name, period_days, num_periods)
             ```
         """
+        if self.plot_type not in ("MultyLine", ):
+            raise exceptions.InvalidPlotTypeError(self.plot_type, method="analyze_one_with_periods")
+
         self.data_transformer.set_strategy(EventDurationPeriodsStrategy())
         return await self._analyze(
             start_time=start_time,
@@ -220,14 +230,14 @@ class AnalyzerFacade:
         )
 
     async def _analyze(
-        self,
-        start_time: datetime,
-        end_time: datetime,
-        event_name: str = None,
-        method: str = "one",
-        period_days: int = 7,
-        num_periods: int = 2,
-        **kwargs
+            self,
+            start_time: datetime,
+            end_time: datetime,
+            event_name: str = None,
+            method: str = "one",
+            period_days: int = 7,
+            num_periods: int = 2,
+            **kwargs
     ) -> go.Figure:
         """
         Analyzes calendar events data and creates a plot using the specified method.
