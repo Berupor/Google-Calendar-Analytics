@@ -1,4 +1,4 @@
-name: Code Sanity Check and Mypy
+name: Code Sanity Check
 
 on:
   push:
