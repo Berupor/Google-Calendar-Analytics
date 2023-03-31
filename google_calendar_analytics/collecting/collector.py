@@ -9,7 +9,7 @@ class AsyncCalendarDataCollector:
     """A class to collect data from a Google Calendar."""
 
     def __init__(self, creds):
-        self.service = build("calendar", "v3", credentials=creds, cache_discovery=True)
+        self.service = build("calendar", "v3", credentials=creds)
 
     async def _get_events_by_time_range(
         self,
@@ -19,18 +19,27 @@ class AsyncCalendarDataCollector:
         thread_pool: ThreadPoolExecutor,
     ) -> list:
         """Helper function to retrieve events in a specific time range."""
-        request = self.service.events().list(
-            calendarId=calendar_id,
+        events = []
+        page_token = None
 
-            timeMin=time_min,
-            timeMax=time_max,
-            singleEvents=True,
-            orderBy="startTime",
-        )
+        while True:
+            request = self.service.events().list(
+                calendarId=calendar_id,
+                timeMin=time_min,
+                timeMax=time_max,
+                singleEvents=True,
+                orderBy="startTime",
+                pageToken=page_token,
+            )
 
-        loop = asyncio.get_running_loop()
-        response = await loop.run_in_executor(thread_pool, request.execute)
-        events = response.get("items", [])
+            loop = asyncio.get_running_loop()
+            response = await loop.run_in_executor(thread_pool, request.execute)
+            events.extend(response.get("items", []))
+
+            page_token = response.get("nextPageToken")
+            if not page_token:
+                break
+
         return events
 
     async def collect_data(

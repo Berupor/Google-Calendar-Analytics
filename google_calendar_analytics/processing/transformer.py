@@ -97,6 +97,7 @@ class OneEventDurationStrategy(EventDurationStrategy):
                 date = datetime.datetime.fromisoformat(start).strftime("%m.%d")
                 one_event[date] = one_event.get(date, 0) + duration
 
+        # print(pd.DataFrame(one_event.items(), columns=["Date", "Duration"]))
         return pd.DataFrame(one_event.items(), columns=["Date", "Duration"])
 
 
