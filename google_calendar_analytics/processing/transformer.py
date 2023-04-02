@@ -14,7 +14,7 @@ class EventDurationStrategy(ABC):
 
     @abstractmethod
     async def calculate_duration(
-            self, events: list[dict], *args, **kwargs
+        self, events: list[dict], *args, **kwargs
     ) -> pd.DataFrame:
         """
         Calculate event durations.
@@ -59,7 +59,7 @@ class ManyEventsDurationStrategy(EventDurationStrategy):
     """
 
     async def calculate_duration(  # type: ignore
-            self, events: list[dict], max_events: int = 5, ascending=False
+        self, events: list[dict], max_events: int = 5, ascending=False
     ) -> pd.DataFrame:
         event_durations = {}  # type: ignore
 
@@ -97,7 +97,6 @@ class OneEventDurationStrategy(EventDurationStrategy):
                 date = datetime.datetime.fromisoformat(start).strftime("%m.%d")
                 one_event[date] = one_event.get(date, 0) + duration
 
-        # print(pd.DataFrame(one_event.items(), columns=["Date", "Duration"]))
         return pd.DataFrame(one_event.items(), columns=["Date", "Duration"])
 
 
@@ -110,20 +109,20 @@ class EventDurationPeriodsStrategy(EventDurationStrategy):
     """
 
     async def calculate_duration(  # type: ignore
-            self,
-            events: list[dict],
-            event_name: str,
-            period_days: int,
-            num_periods: int,
+        self,
+        events: list[dict],
+        event_name: str,
+        period_days: int,
+        num_periods: int,
     ) -> pd.DataFrame:
         period_duration = datetime.timedelta(days=period_days)
         periods = []
 
         for i in range(num_periods):
             period_end = (
-                    datetime.datetime.now().date()
-                    - datetime.timedelta(days=datetime.datetime.now().weekday())
-                    - period_duration * i
+                datetime.datetime.now().date()
+                - datetime.timedelta(days=datetime.datetime.now().weekday())
+                - period_duration * i
             )
             period_start = period_end - period_duration + datetime.timedelta(days=1)
             periods.append((period_start, period_end))
@@ -167,7 +166,7 @@ class AsyncDataTransformer:
         self.strategy = strategy
 
     async def calculate_duration(
-            self, events: list[dict], *args, **kwargs
+        self, events: list[dict], *args, **kwargs
     ) -> pd.DataFrame:
         if not self.strategy:
             raise ValueError("Strategy is not set")
