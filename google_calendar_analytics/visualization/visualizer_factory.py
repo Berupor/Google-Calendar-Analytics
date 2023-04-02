@@ -10,28 +10,29 @@ define required abstract methods. The factory method PlotFactory returns an obje
 of the specified visualization class based on input parameters.
 """
 from abc import ABC, abstractmethod
+from typing import Type
 
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objs as go
+
+from visualization.visual_design import base_plot_design  # type: ignore
 
 
 class Plot(ABC):
-    FIG_SIZE = {"width": 800, "height": 400}
-    COLORS = px.colors.qualitative.Pastel
+    def __init__(self, style_class: base_plot_design, **kwargs):
+        self.style_class = style_class
+        self.transparency = style_class.transparency
 
-    def __init__(self, dark_theme=False, transparency=1.0, **kwargs):
-        self.dark_theme = dark_theme
-        self.transparency = transparency
-
-        if self.dark_theme:
+        if self.style_class.dark_theme:
             self.font_color = "white"
             self.plot_bgcolor = f"rgba(34, 34, 34, {self.transparency})"
             self.paper_bgcolor = f"rgba(34, 34, 34, {self.transparency})"
+            self.grid_color = style_class.grid_color or "white"
         else:
             self.font_color = "black"
             self.plot_bgcolor = f"rgba(247, 247, 247, {self.transparency})"
             self.paper_bgcolor = f"rgba(255, 255, 255, {self.transparency})"
+            self.grid_color = style_class.grid_color or "black"
 
 
 class ManyEventPlot(Plot):
@@ -84,15 +85,21 @@ class PiePlot(ManyEventPlot):
                 values=events.Duration,
                 textposition="auto",
                 name="Duration",
-                marker=dict(colors=self.COLORS),
+                marker=dict(colors=self.style_class.rgb_colors),
                 textinfo="label+percent",
+                showlegend=self.style_class.show_legend,
             )
         )
+
+        if self.style_class.show_title:
+            fig.update_layout(
+                title=title,
+                title_font=dict(size=18, color=self.font_color),
+            )
+
         fig.update_layout(
-            title=title,
-            title_font=dict(size=18, color=self.font_color),
-            width=self.FIG_SIZE["width"],
-            height=self.FIG_SIZE["height"],
+            width=self.style_class.width,
+            height=self.style_class.height,
             plot_bgcolor=self.plot_bgcolor,
             paper_bgcolor=self.paper_bgcolor,
             font=dict(color=self.font_color),
@@ -124,20 +131,24 @@ class BarPlot(ManyEventPlot):
                 x=events.Event,
                 y=events.Duration,
                 name="Duration",
-                marker=dict(color=self.COLORS, colorscale="Blues"),
+                marker=dict(color=self.style_class.rgb_colors, colorscale="Blues"),
             )
         )
 
+        if self.style_class.show_title:
+            fig.update_layout(
+                title=title,
+                title_font=dict(size=18, color=self.font_color),
+            )
+
         fig.update_layout(
-            title=title,
-            title_font=dict(size=18, color=self.font_color),
             xaxis=dict(title="Event", title_font=dict(size=14, color=self.font_color)),
             yaxis=dict(
                 title="Duration (Hours)",
                 title_font=dict(size=14, color=self.font_color),
             ),
-            width=self.FIG_SIZE["width"],
-            height=self.FIG_SIZE["height"],
+            width=self.style_class.width,
+            height=self.style_class.height,
             plot_bgcolor=self.plot_bgcolor,
             paper_bgcolor=self.paper_bgcolor,
             font=dict(color=self.font_color),
@@ -169,38 +180,47 @@ class LinePlot(OneEventPlot):
                 x=events.Date,
                 y=events.Duration,
                 mode="lines+markers",
-                line=dict(color="red", width=2),
-                marker=dict(size=6, color="red"),
+                line=dict(
+                    color=self.style_class.rgb_line_color,
+                    width=self.style_class.line_width,
+                    shape=self.style_class.line_shape,
+                ),
+                marker=dict(size=6, color=self.style_class.rgb_line_color),
                 name="Duration",
             )
         )
 
+        if self.style_class.show_title:
+            fig.update_layout(
+                title=dict(
+                    text=f"Time spent on {event_name}",
+                    font=dict(size=16, color=self.font_color),
+                )
+            )
         fig.update_layout(
-            title=dict(
-                text=f"Time spent on {event_name}",
-                font=dict(size=16, color=self.font_color),
-            ),
             xaxis=dict(
                 title="Date",
-                showgrid=True,
+                showgrid=self.style_class.show_grid,
                 nticks=10,
                 dtick="D5",
-                gridwidth=0.2,
+                gridcolor=self.grid_color,
+                gridwidth=self.style_class.grid_width,
                 titlefont=dict(size=14, color=self.font_color),
                 tickfont=dict(size=12, color=self.font_color),
                 tickcolor=self.font_color,
             ),
             yaxis=dict(
                 title="Duration (hours)",
-                showgrid=True,
-                gridwidth=0.2,
+                showgrid=self.style_class.show_grid,
+                gridwidth=self.style_class.grid_width,
+                gridcolor=self.grid_color,
                 titlefont=dict(size=14, color=self.font_color),
                 tickfont=dict(size=12, color=self.font_color),
                 tickcolor=self.font_color,
             ),
             margin=dict(l=50, r=50, t=80, b=50),
-            width=self.FIG_SIZE["width"],
-            height=self.FIG_SIZE["height"],
+            width=self.style_class.width,
+            height=self.style_class.height,
             plot_bgcolor=self.plot_bgcolor,
             paper_bgcolor=self.paper_bgcolor,
         )
@@ -239,35 +259,42 @@ class MultyLinePlot(OneEventPlot):
                     name=period_label,
                     text=period_events.Date,
                     hovertemplate="<b>Date:</b> %{text} <br><b>Duration:</b> %{y:.2f} hours",
+                    showlegend=self.style_class.show_legend,
                 )
             )
             fig.update_layout(hovermode="x")
 
+        if self.style_class.show_title:
+            fig.update_layout(
+                title=dict(
+                    text=f"Time spent on {event_name}",
+                    font=dict(size=16, color=self.font_color),
+                )
+            )
+
         # Update the color scheme and set the title of the figure
         fig.update_layout(
-            title=dict(
-                text=f"Time spent on the {event_name} in periods of {events.Day.max()} days",
-                font=dict(size=16, color=self.font_color),
-            ),
             xaxis=dict(
                 title="Day",
-                showgrid=True,
-                gridwidth=0.2,
+                showgrid=self.style_class.show_grid,
+                gridwidth=self.style_class.grid_width,
                 dtick="D5",
+                gridcolor=self.grid_color,
                 titlefont=dict(size=14, color=self.font_color),
                 tickfont=dict(size=12, color=self.font_color),
                 tickcolor=self.font_color,
             ),
             yaxis=dict(
                 title="Duration (hours)",
-                showgrid=True,
-                gridwidth=0.2,
+                showgrid=self.style_class.show_grid,
+                gridwidth=self.style_class.grid_width,
+                gridcolor=self.grid_color,
                 titlefont=dict(size=14, color=self.font_color),
                 tickfont=dict(size=12, color=self.font_color),
             ),
             margin=dict(l=50, r=50, t=80, b=50),
-            width=self.FIG_SIZE["width"],
-            height=self.FIG_SIZE["height"],
+            width=self.style_class.width,
+            height=self.style_class.height,
             plot_bgcolor=self.plot_bgcolor,
             paper_bgcolor=self.paper_bgcolor,
         )
@@ -275,16 +302,15 @@ class MultyLinePlot(OneEventPlot):
 
 
 async def PlotFactory(
-    plot_type="Pie", dark_theme=False, transparency=1, event_name="Event"
+    style_class: Type[base_plot_design], plot_type="Pie", event_name="Event"
 ) -> Plot:
     """
     Factory method to create a plot object.
 
     Args:
         plot_type (str): The type of plot to create.
-        dark_theme (bool): Whether to use a dark theme or not.
-        transparency (float): The transparency of the chart.
         event_name (str): The name of the event.
+        style_class (Type[base_plot_design]): The style class to use for the plot.
     """
 
     plots = {
@@ -300,6 +326,4 @@ async def PlotFactory(
             f"Available options are: {', '.join(plots.keys())}."
         )
 
-    return plots[plot_type](
-        dark_theme=dark_theme, transparency=transparency, event_name=event_name
-    )
+    return plots[plot_type](style_class=style_class, event_name=event_name)
