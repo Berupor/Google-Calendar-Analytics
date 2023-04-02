@@ -17,17 +17,21 @@ AnalyzerFacade class with different options.
 """
 
 from datetime import datetime
+from typing import Type
 
 import plotly.graph_objs as go
 from google.oauth2.credentials import Credentials  # type: ignore
 
 from .collecting.collector import AsyncCalendarDataCollector
-from .processing.transformer import (AsyncDataTransformer,
-                                     EventDurationPeriodsStrategy,
-                                     ManyEventsDurationStrategy,
-                                     OneEventDurationStrategy)
-from .visualization.visualizer_factory import PlotFactory
 from .core import exceptions
+from .processing.transformer import (
+    AsyncDataTransformer,
+    EventDurationPeriodsStrategy,
+    ManyEventsDurationStrategy,
+    OneEventDurationStrategy,
+)
+from .visualization.visual_design import base_plot_design
+from .visualization.visualizer_factory import PlotFactory
 
 
 class AnalyzerFacade:
@@ -46,8 +50,6 @@ class AnalyzerFacade:
     Attributes:
         creds (Credentials): An instance of the Credentials class.
         plot_type (str): The type of chart to be generated.
-        transparency (float): The transparency of the chart.
-        dark_theme (bool): If True, the chart will be generated with a dark theme.
         max_events (int): The maximum number of events to be analyzed.
         ascending (bool): If True, sort the events in ascending order of duration.
         data_collector (AsyncCalendarDataCollector): An instance of the CalendarDataCollector class.
@@ -86,11 +88,10 @@ class AnalyzerFacade:
         ```
     """
 
-    def __init__(self, creds: Credentials):
+    def __init__(self, creds: Credentials, visual_design: Type[base_plot_design]):
         self.creds = creds
         self.plot_type = "Line"
-        self.transparency = 1.0
-        self.dark_theme = False
+        self.style_class = visual_design
         self.max_events = 5
         self.ascending = False
 
@@ -98,7 +99,12 @@ class AnalyzerFacade:
         self.data_transformer = AsyncDataTransformer()
 
     async def analyze_one(
-            self, start_time: datetime, end_time: datetime, event_name: str, **kwargs
+        self,
+        start_time: datetime,
+        end_time: datetime,
+        event_name: str,
+        plot_type: str,
+        **kwargs
     ) -> go.Figure:
         """
         Analyze a single event and generate a plot.
@@ -109,6 +115,7 @@ class AnalyzerFacade:
             start_time (datetime): The start time for the analysis.
             end_time (datetime): The end time for the analysis.
             event_name (str): The name of the event to analyze.
+            plot_type (str): The type of plot to generate.
             **kwargs: Additional keyword arguments for the plot creation.
 
         Returns:
@@ -128,8 +135,10 @@ class AnalyzerFacade:
             plot = await analyzer.analyze_one(start_time, end_time, event_name)
             ```
         """
-        if self.plot_type not in ("Line", ):
+        if plot_type not in ("Line",):
             raise exceptions.InvalidPlotTypeError(self.plot_type, method="analyze_one")
+
+        self.plot_type = plot_type
 
         self.data_transformer.set_strategy(OneEventDurationStrategy())
         return await self._analyze(
@@ -140,7 +149,13 @@ class AnalyzerFacade:
         )
 
     async def analyze_many(
-            self, start_time: datetime, end_time: datetime, **kwargs
+        self,
+        start_time: datetime,
+        end_time: datetime,
+        plot_type: str,
+        max_events: int = 5,
+        ascending=False,
+        **kwargs
     ) -> go.Figure:
         """
         Analyze multiple calendar events and generate a plot of their durations.
@@ -148,6 +163,9 @@ class AnalyzerFacade:
         Args:
             start_time (datetime): The start time for the analysis.
             end_time (datetime): The end time for the analysis.
+            plot_type (str): The type of plot to generate.
+            max_events (int): The maximum number of events to analyze.
+            ascending (bool): If True, sort the events in ascending order of duration.
             **kwargs: Additional keyword arguments for the plot creation.
 
         Returns:
@@ -165,8 +183,13 @@ class AnalyzerFacade:
             fig.show()
             ```
         """
-        if self.plot_type not in ("Bar", "Pie"):
+
+        if plot_type not in ("Bar", "Pie"):
             raise exceptions.InvalidPlotTypeError(self.plot_type, method="analyze_many")
+
+        self.plot_type = plot_type
+        self.max_events = max_events
+        self.ascending = ascending
 
         self.data_transformer.set_strategy(ManyEventsDurationStrategy())
         return await self._analyze(
@@ -176,13 +199,14 @@ class AnalyzerFacade:
         )
 
     async def analyze_one_with_periods(
-            self,
-            start_time: datetime,
-            end_time: datetime,
-            event_name: str,
-            period_days: int = 7,
-            num_periods: int = 2,
-            **kwargs
+        self,
+        start_time: datetime,
+        end_time: datetime,
+        event_name: str,
+        plot_type: str,
+        period_days: int = 7,
+        num_periods: int = 2,
+        **kwargs
     ) -> go.Figure:
         """
         Analyze a single event over multiple periods of time and generate a plot.
@@ -195,6 +219,7 @@ class AnalyzerFacade:
             event_name (str): The name of the event to analyze.
             period_days (int, optional): The number of days in each period. Defaults to 7.
             num_periods (int, optional): The number of periods to analyze. Defaults to 2.
+            plot_type (str): The type of plot to generate.
             **kwargs: Additional keyword arguments for the plot creation.
 
         Returns:
@@ -216,8 +241,12 @@ class AnalyzerFacade:
             plot = await analyzer.analyze_one_with_periods(start_time, end_time, event_name, period_days, num_periods)
             ```
         """
-        if self.plot_type not in ("MultyLine", ):
-            raise exceptions.InvalidPlotTypeError(self.plot_type, method="analyze_one_with_periods")
+        if plot_type not in ("MultyLine",):
+            raise exceptions.InvalidPlotTypeError(
+                self.plot_type, method="analyze_one_with_periods"
+            )
+
+        self.plot_type = plot_type
 
         self.data_transformer.set_strategy(EventDurationPeriodsStrategy())
         return await self._analyze(
@@ -230,14 +259,14 @@ class AnalyzerFacade:
         )
 
     async def _analyze(
-            self,
-            start_time: datetime,
-            end_time: datetime,
-            event_name: str = None,
-            method: str = "one",
-            period_days: int = 7,
-            num_periods: int = 2,
-            **kwargs
+        self,
+        start_time: datetime,
+        end_time: datetime,
+        event_name: str = None,  # type: ignore
+        method: str = "one",
+        period_days: int = 7,
+        num_periods: int = 2,
+        **kwargs
     ) -> go.Figure:
         """
         Analyzes calendar events data and creates a plot using the specified method.
@@ -259,8 +288,7 @@ class AnalyzerFacade:
         """
         plot_creator = await PlotFactory(
             plot_type=self.plot_type,
-            dark_theme=self.dark_theme,
-            transparency=self.transparency,
+            style_class=self.style_class,
         )
 
         calendar_events = await self.data_collector.collect_data(
@@ -295,64 +323,3 @@ class AnalyzerFacade:
             )
         else:
             raise ValueError("Invalid method specified")
-
-
-class AnalyzerBuilder:
-    """
-    Builder class to create instances of the AnalyzerFacade.
-
-    This class allows you to set different options for the AnalyzerFacade
-    and then build the final instance using the `build` method.
-
-    Examples:
-        ```
-        analyzer = (
-            AnalyzerBuilder()
-            .with_credentials(creds)
-            .with_plot_type("Line")
-            .with_dark_theme(True)
-            .build()
-        )
-        ```
-    """
-
-    def __init__(self):
-        self._creds = None
-        self._plot_type = "Line"
-        self._transparency = 1.0
-        self._dark_theme = False
-        self._max_events = 5
-        self._ascending = False
-
-    def with_credentials(self, creds: Credentials):
-        self._creds = creds
-        return self
-
-    def with_plot_type(self, plot_type: str):
-        self._plot_type = plot_type
-        return self
-
-    def with_transparency(self, transparency: float):
-        self._transparency = transparency
-        return self
-
-    def with_dark_theme(self, dark_theme: bool):
-        self._dark_theme = dark_theme
-        return self
-
-    def with_max_events(self, max_events: int):
-        self._max_events = max_events
-        return self
-
-    def with_ascending(self, ascending: bool):
-        self._ascending = ascending
-        return self
-
-    def build(self) -> AnalyzerFacade:
-        analyzer = AnalyzerFacade(self._creds)
-        analyzer.plot_type = self._plot_type
-        analyzer.transparency = self._transparency
-        analyzer.dark_theme = self._dark_theme
-        analyzer.max_events = self._max_events
-        analyzer.ascending = self._ascending
-        return analyzer
