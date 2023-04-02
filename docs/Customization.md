@@ -1,20 +1,51 @@
-You can customize your plot by creating an instance of AnalyzerBuilder with different options,
-such as the plot type, transparency, dark theme, and maximum number of events to be analyzed.
+You can customize your plots by editing the `base_plot_design` object.
 
 ```python
-from google_calendar_analytics import AnalyzerBuilder
+from google_calendar_analytics.authentication.auth import CalendarAuth
+from datetime import datetime
+from google_calendar_analytics.analytics import AnalyzerFacade
+from googleapiclient.discovery import build, Resource  # type: ignore
+from google_calendar_analytics.visualization.visual_design import base_plot_design
+import asyncio
 
-analyzer = (
-     AnalyzerBuilder()
-    .with_credentials(creds)
-    .with_plot_type("Bar")  # Choose a plot type: Bar, Line, MultyLine, or Pie
-    .with_transparency(0.5)  # Set the transparency of the chart
-    .with_dark_theme(True)  # Enable dark theme for the chart
-    .with_max_events(10)  # Set the maximum number of events to be analyzed
-    .with_ascending(False)  # Sort the events in descending order of duration
-    .build()  # Build the analyzer instance
-)
+creds = CalendarAuth(
+    token_path="./token.json",
+    credentials_path="./credentials.json",
+).get_credentials()
+
+start_time = datetime(2023, 3, 1)
+end_time = datetime(2023, 3, 30)
+
+base_plot_design.transparency = 0.5
+base_plot_design.grid_width = 0.1
+base_plot_design.grid_color = "white"
+base_plot_design.line_shape = "spline"
+base_plot_design.rgb_line_color = "rgb(0, 255, 0)"
+
+base_plot_design.dark_theme = True
+base_plot_design.show_title = False
+base_plot_design.show_legend = False
+
+
+async def main():
+    analyzer = AnalyzerFacade(creds=creds, visual_design=base_plot_design)
+    plot = await analyzer.analyze_one(
+        start_time, end_time, event_name="Programming", plot_type="Line"
+    )
+    plot.show()
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
+
+## Plot design
+Available plot design variables:
+
+::: google_calendar_analytics.visualization.visual_design.VisualDesign
+    title: Plot design
+    
+    
+
 
 ## Plot types
 You can choose from the following plot types:
