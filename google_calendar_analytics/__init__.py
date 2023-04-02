@@ -22,7 +22,7 @@ from .visualization.visualizer_factory import (
     PiePlot,
     PlotFactory,
 )
-from .visualization.visual_design import VisualDesign, base_plot_design
+from .visualization.visual_design import VisualDesign, base_plot_design, pastel_palette
 
 __all__ = [
     "AnalyzerFacade",
@@ -39,6 +39,7 @@ __all__ = [
     "PlotFactory",
     "VisualDesign",
     "base_plot_design",
+    "pastel_palette",
 ]
 
 __author__ = "Berupor"
