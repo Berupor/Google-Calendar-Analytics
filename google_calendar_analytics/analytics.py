@@ -30,7 +30,7 @@ from .processing.transformer import (
     ManyEventsDurationStrategy,
     OneEventDurationStrategy,
 )
-from .visualization.visual_design import base_plot_design
+from .visualization.visual_design import base_plot_design, VisualDesign
 from .visualization.visualizer_factory import PlotFactory
 
 
@@ -88,10 +88,10 @@ class AnalyzerFacade:
         ```
     """
 
-    def __init__(self, creds: Credentials, visual_design: Type[base_plot_design]):
+    def __init__(self, creds: Credentials):
+        self.style_class = None
         self.creds = creds
         self.plot_type = "Line"
-        self.style_class = visual_design
         self.max_events = 5
         self.ascending = False
 
@@ -104,6 +104,7 @@ class AnalyzerFacade:
         end_time: datetime,
         event_name: str,
         plot_type: str,
+        style_class: VisualDesign = base_plot_design,
         **kwargs
     ) -> go.Figure:
         """
@@ -116,6 +117,7 @@ class AnalyzerFacade:
             end_time (datetime): The end time for the analysis.
             event_name (str): The name of the event to analyze.
             plot_type (str): The type of plot to generate.
+            style_class (Type[VisualDesign]): The class that defines the style of the plot.
             **kwargs: Additional keyword arguments for the plot creation.
 
         Returns:
@@ -138,6 +140,7 @@ class AnalyzerFacade:
         if plot_type not in ("Line",):
             raise exceptions.InvalidPlotTypeError(self.plot_type, method="analyze_one")
 
+        self.style_class = style_class
         self.plot_type = plot_type
 
         self.data_transformer.set_strategy(OneEventDurationStrategy())
@@ -155,6 +158,7 @@ class AnalyzerFacade:
         plot_type: str,
         max_events: int = 5,
         ascending=False,
+        style_class: VisualDesign = base_plot_design,
         **kwargs
     ) -> go.Figure:
         """
@@ -166,6 +170,7 @@ class AnalyzerFacade:
             plot_type (str): The type of plot to generate.
             max_events (int): The maximum number of events to analyze.
             ascending (bool): If True, sort the events in ascending order of duration.
+            style_class (Type[VisualDesign]): The class that defines the style of the plot.
             **kwargs: Additional keyword arguments for the plot creation.
 
         Returns:
@@ -187,6 +192,7 @@ class AnalyzerFacade:
         if plot_type not in ("Bar", "Pie"):
             raise exceptions.InvalidPlotTypeError(self.plot_type, method="analyze_many")
 
+        self.style_class = style_class
         self.plot_type = plot_type
         self.max_events = max_events
         self.ascending = ascending
@@ -206,6 +212,7 @@ class AnalyzerFacade:
         plot_type: str,
         period_days: int = 7,
         num_periods: int = 2,
+        style_class: VisualDesign = base_plot_design,
         **kwargs
     ) -> go.Figure:
         """
@@ -220,6 +227,7 @@ class AnalyzerFacade:
             period_days (int, optional): The number of days in each period. Defaults to 7.
             num_periods (int, optional): The number of periods to analyze. Defaults to 2.
             plot_type (str): The type of plot to generate.
+            style_class (Type[VisualDesign]): The class that defines the style of the plot.
             **kwargs: Additional keyword arguments for the plot creation.
 
         Returns:
@@ -246,6 +254,7 @@ class AnalyzerFacade:
                 self.plot_type, method="analyze_one_with_periods"
             )
 
+        self.style_class = style_class
         self.plot_type = plot_type
 
         self.data_transformer.set_strategy(EventDurationPeriodsStrategy())

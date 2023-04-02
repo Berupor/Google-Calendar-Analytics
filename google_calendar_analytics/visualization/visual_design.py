@@ -22,10 +22,11 @@ class VisualDesign:
     """
 
     grid_color: str = None  # type: ignore
+    font_color: str = None  # type: ignore
     rgb_colors: tuple = pastel_palette
 
-    rgb_line_color = "rgb(255, 0, 0)"
-    line_shape = "linear"
+    rgb_line_color: str = "rgb(255, 0, 0)"
+    line_shape: str = "linear"
 
     grid_width: float = 0.1
     transparency: float = 1.0
@@ -34,10 +35,12 @@ class VisualDesign:
     width: int = 800
     height: int = 400
 
-    dark_theme = False
+    dark_theme: bool = False
     show_grid: bool = True
     show_title: bool = True
     show_legend: bool = True
+    show_xaxis_title: bool = True
+    show_yaxis_title: bool = True
 
     def __post_init__(self):
         """

@@ -15,7 +15,7 @@ from typing import Type
 import pandas as pd
 import plotly.graph_objs as go
 
-from visualization.visual_design import base_plot_design  # type: ignore
+from .visual_design import base_plot_design  # type: ignore
 
 
 class Plot(ABC):
@@ -24,12 +24,12 @@ class Plot(ABC):
         self.transparency = style_class.transparency
 
         if self.style_class.dark_theme:
-            self.font_color = "white"
+            self.font_color = style_class.font_color or "white"
             self.plot_bgcolor = f"rgba(34, 34, 34, {self.transparency})"
             self.paper_bgcolor = f"rgba(34, 34, 34, {self.transparency})"
             self.grid_color = style_class.grid_color or "white"
         else:
-            self.font_color = "black"
+            self.font_color = style_class.font_color or "black"
             self.plot_bgcolor = f"rgba(247, 247, 247, {self.transparency})"
             self.paper_bgcolor = f"rgba(255, 255, 255, {self.transparency})"
             self.grid_color = style_class.grid_color or "black"
@@ -134,6 +134,11 @@ class BarPlot(ManyEventPlot):
                 marker=dict(color=self.style_class.rgb_colors, colorscale="Blues"),
             )
         )
+        if self.style_class.show_xaxis_title:
+            fig.update_xaxes(title_text="Event")
+
+        if self.style_class.show_yaxis_title:
+            fig.update_yaxes(title_text="Duration (Hours)")
 
         if self.style_class.show_title:
             fig.update_layout(
@@ -142,11 +147,6 @@ class BarPlot(ManyEventPlot):
             )
 
         fig.update_layout(
-            xaxis=dict(title="Event", title_font=dict(size=14, color=self.font_color)),
-            yaxis=dict(
-                title="Duration (Hours)",
-                title_font=dict(size=14, color=self.font_color),
-            ),
             width=self.style_class.width,
             height=self.style_class.height,
             plot_bgcolor=self.plot_bgcolor,
@@ -197,9 +197,15 @@ class LinePlot(OneEventPlot):
                     font=dict(size=16, color=self.font_color),
                 )
             )
+
+        if self.style_class.show_xaxis_title:
+            fig.update_xaxes(title_text="Date")
+
+        if self.style_class.show_yaxis_title:
+            fig.update_yaxes(title_text="Duration (hours)")
+
         fig.update_layout(
             xaxis=dict(
-                title="Date",
                 showgrid=self.style_class.show_grid,
                 nticks=10,
                 dtick="D5",
@@ -210,7 +216,6 @@ class LinePlot(OneEventPlot):
                 tickcolor=self.font_color,
             ),
             yaxis=dict(
-                title="Duration (hours)",
                 showgrid=self.style_class.show_grid,
                 gridwidth=self.style_class.grid_width,
                 gridcolor=self.grid_color,
@@ -272,10 +277,14 @@ class MultyLinePlot(OneEventPlot):
                 )
             )
 
+        if self.style_class.show_xaxis_title:
+            fig.update_xaxes(title_text="Day")
+
+        if self.style_class.show_yaxis_title:
+            fig.update_yaxes(title_text="Duration (hours)")
         # Update the color scheme and set the title of the figure
         fig.update_layout(
             xaxis=dict(
-                title="Day",
                 showgrid=self.style_class.show_grid,
                 gridwidth=self.style_class.grid_width,
                 dtick="D5",
@@ -285,7 +294,6 @@ class MultyLinePlot(OneEventPlot):
                 tickcolor=self.font_color,
             ),
             yaxis=dict(
-                title="Duration (hours)",
                 showgrid=self.style_class.show_grid,
                 gridwidth=self.style_class.grid_width,
                 gridcolor=self.grid_color,
