@@ -52,7 +52,7 @@ def sample_events():
 
 @pytest.mark.asyncio
 async def test_many_events_duration_strategy_calculate_duration(
-        many_events_duration_strategy, sample_events
+    many_events_duration_strategy, sample_events
 ):
     result = await many_events_duration_strategy.calculate_duration(
         sample_events, max_events=2
@@ -65,7 +65,7 @@ async def test_many_events_duration_strategy_calculate_duration(
 
 @pytest.mark.asyncio
 async def test_one_event_duration_strategy_calculate_duration(
-        one_event_duration_strategy, sample_events
+    one_event_duration_strategy, sample_events
 ):
     result = await one_event_duration_strategy.calculate_duration(
         sample_events, event_name="Event 2"
@@ -100,6 +100,8 @@ async def test_event_duration_periods_strategy_not_enough_data_error(
 
 
 @pytest.mark.asyncio
-async def test_async_data_transformer_no_strategy(async_data_transformer, sample_events):
+async def test_async_data_transformer_no_strategy(
+    async_data_transformer, sample_events
+):
     with pytest.raises(ValueError):
         await async_data_transformer.calculate_duration(sample_events)
