@@ -23,9 +23,9 @@ class InvalidPlotTypeError(ValueError):
 
     def __str__(self):
         options = {
-            "analyze_one": ("Line", ),
+            "analyze_one": ("Line",),
             "analyze_many": ("Bar", "Pie"),
-            "analyze_one_with_periods": ("MultyLine", )
+            "analyze_one_with_periods": ("MultyLine",),
         }
 
         if self.method is None or self.method not in options:
