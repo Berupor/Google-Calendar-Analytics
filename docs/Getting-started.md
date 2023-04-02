@@ -19,8 +19,6 @@ from datetime import datetime
 from google.oauth2.credentials import Credentials
 from google_calendar_analytics import AnalyzerFacade
 
-from google_calendar_analytics.visualization.visual_design import base_plot_design
-
 # (You can get it from Google OAuth2 in you web app or from link above)
 # Example of creds dictionary. (You can get it from Google OAuth2 in your web app)
 creds = {
@@ -39,7 +37,7 @@ Once you have created the credentials, you can create an instance of the Analyze
 data:
 
 ```python
-analyzer = AnalyzerFacade(creds=creds, visual_design=base_plot_design)
+analyzer = AnalyzerFacade(creds=creds)
 
 # Choose time range for analysis
 start_time = datetime(2023, 3, 1)
