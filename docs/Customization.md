@@ -28,12 +28,13 @@ base_plot_design.show_legend = False
 
 
 async def main():
-    analyzer = AnalyzerFacade(creds=creds)
-    plot = await analyzer.analyze_one(
-        start_time, end_time, event_name="Programming", plot_type="Line"
-    )
-    plot.show()
-
+    async with AnalyzerFacade(creds=creds) as analyzer:
+        coroutines = []
+        coroutines.append(analyzer.analyze_one(start_time, end_time, event_name="Programming", plot_type="Line", style_class=dark_plot_design))
+        
+        result = await asyncio.gather(*coroutines)
+        for plot in result:
+            plot.show()
 
 if __name__ == "__main__":
     asyncio.run(main())
@@ -66,13 +67,15 @@ rainy_design = VisualDesign(
     show_legend=False,
 )
 
-sunny_plot = await analyzer.analyze_one(
-    start_time, end_time, event_name="Programming", plot_type="Line", style_class=sunny_design
-)
-
-rainy_plot = await analyzer.analyze_one(
-    start_time, end_time, event_name="Programming", plot_type="Line", style_class=rainy_design
-)
+async def main():
+    async with AnalyzerFacade(creds=creds) as analyzer:
+        coroutines = []
+        coroutines.append(analyzer.analyze_one(start_time, end_time, event_name="Programming", plot_type="Line", style_class=sunny_design))
+        coroutines.append(analyzer.analyze_one(start_time, end_time, event_name="Programming", plot_type="Line", style_class=rainy_design))
+            
+        result = await asyncio.gather(*coroutines)
+        for plot in result:
+            plot.show()
 ```
 
 ## Plot design
