@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "google-calendar-analytics"
-version = "0.4.2"
+version = "0.5.0"
 description = "A Python library for analyzing Google Calendar data."
 authors = [
     "Berupor <evgeniy.zelenoff@gmail.com>"
@@ -36,6 +36,8 @@ google-auth-httplib2 = "0.1.0"
 google-auth-oauthlib = "1.0.0"
 plotly = "5.13.0"
 kaleido = "0.2.1"
+aiohttp = "3.8.4"
+certifi = "2022.12.7"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "1.0.1"

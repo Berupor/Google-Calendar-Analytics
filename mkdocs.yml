@@ -18,12 +18,14 @@ theme:
 repo_url: https://github.com/Berupor/Calendar-Analytics
 repo_name: Berupor/Calendar-Analytics
 
-mkdocstrings:
-    default_handler: crystal
-    watch: [src]
-
 plugins:
-  - mkdocstrings
+  - search
+  - mkdocstrings:
+      default_handler: python
+      watch: [google_calendar_analytics]
+  - literate-nav:
+      nav_file: Getting-started.md
+        - section-index
 
 nav:
   - Analytics Docs: index.md

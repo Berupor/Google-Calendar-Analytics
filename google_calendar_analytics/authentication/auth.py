@@ -3,12 +3,13 @@ import os.path
 from google.auth.transport.requests import Request  # type: ignore
 from google.oauth2.credentials import Credentials  # type: ignore
 from google_auth_oauthlib.flow import InstalledAppFlow  # type: ignore
+from pathlib import Path
 
 
 class CalendarAuth:
     SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
-    def __init__(self, token_path: str, credentials_path: str):
+    def __init__(self, token_path: Path, credentials_path: Path):
         self.token_path = token_path
         self.credentials_path = credentials_path
 

@@ -15,22 +15,22 @@ The AnalyzerBuilder class is a builder class that allows for creating instances 
 AnalyzerFacade class with different options.
 
 """
-
+import ssl
 from datetime import datetime
 from typing import Type
 
+import aiohttp
+import certifi
 import plotly.graph_objs as go
 from google.oauth2.credentials import Credentials  # type: ignore
 
 from .collecting.collector import AsyncCalendarDataCollector
 from .core import exceptions
-from .processing.transformer import (
-    AsyncDataTransformer,
-    EventDurationPeriodsStrategy,
-    ManyEventsDurationStrategy,
-    OneEventDurationStrategy,
-)
-from .visualization.visual_design import base_plot_design, VisualDesign
+from .processing.transformer import (EventDurationPeriodsStrategy,
+                                     EventDurationStrategy,
+                                     ManyEventsDurationStrategy,
+                                     OneEventDurationStrategy)
+from .visualization.visual_design import VisualDesign, base_plot_design
 from .visualization.visualizer_factory import PlotFactory
 
 
@@ -53,7 +53,6 @@ class AnalyzerFacade:
         max_events (int): The maximum number of events to be analyzed.
         ascending (bool): If True, sort the events in ascending order of duration.
         data_collector (AsyncCalendarDataCollector): An instance of the CalendarDataCollector class.
-        data_transformer (DataTransformer): An instance of the DataTransformer class.
 
     Examples:
         ```python
@@ -95,8 +94,23 @@ class AnalyzerFacade:
         self.max_events = 5
         self.ascending = False
 
-        self.data_collector = AsyncCalendarDataCollector(creds)
-        self.data_transformer = AsyncDataTransformer()
+        self.session = None
+        self.data_collector = None
+
+    async def __aenter__(self):
+        ssl_context = ssl.create_default_context(cafile=certifi.where())
+        self.session = aiohttp.ClientSession(
+            connector=aiohttp.TCPConnector(ssl=ssl_context)
+        )
+        self.data_collector = AsyncCalendarDataCollector(self.creds, self.session)
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        if self.session:
+            await self.session.close()
+
+        self.session = None
+        self.data_collector = None
 
     async def analyze_one(
         self,
@@ -143,12 +157,12 @@ class AnalyzerFacade:
         self.style_class = style_class
         self.plot_type = plot_type
 
-        self.data_transformer.set_strategy(OneEventDurationStrategy())
         return await self._analyze(
             start_time=start_time,
             end_time=end_time,
             event_name=event_name,
             method="one",
+            transformer_strategy=OneEventDurationStrategy(),
         )
 
     async def analyze_many(
@@ -197,11 +211,11 @@ class AnalyzerFacade:
         self.max_events = max_events
         self.ascending = ascending
 
-        self.data_transformer.set_strategy(ManyEventsDurationStrategy())
         return await self._analyze(
             start_time=start_time,
             end_time=end_time,
             method="many",
+            transformer_strategy=ManyEventsDurationStrategy(),
         )
 
     async def analyze_one_with_periods(
@@ -257,7 +271,6 @@ class AnalyzerFacade:
         self.style_class = style_class
         self.plot_type = plot_type
 
-        self.data_transformer.set_strategy(EventDurationPeriodsStrategy())
         return await self._analyze(
             start_time=start_time,
             end_time=end_time,
@@ -265,12 +278,14 @@ class AnalyzerFacade:
             method="one_with_periods",
             period_days=period_days,
             num_periods=num_periods,
+            transformer_strategy=EventDurationPeriodsStrategy(),
         )
 
     async def _analyze(
         self,
         start_time: datetime,
         end_time: datetime,
+        transformer_strategy: EventDurationStrategy,
         event_name: str = None,  # type: ignore
         method: str = "one",
         period_days: int = 7,
@@ -284,6 +299,7 @@ class AnalyzerFacade:
             start_time (datetime): The start time for the analysis.
             end_time (datetime): The end time for the analysis.
             event_name (str, optional): The name of the event to analyze. Required for the 'one' and 'one_with_periods' methods. Defaults to None.
+            transformer_strategy (DataTransformerStrategy): The strategy to use for data transformation.
             method (str, optional): The method to use for analysis. Must be one of 'one', 'many', or 'one_with_periods'. Defaults to 'one'.
             period_days (int, optional): The number of days in each period. Required for the 'one_with_periods' method. Defaults to 7.
             num_periods (int, optional): The number of periods to analyze. Required for the 'one_with_periods' method. Defaults to 2.
@@ -306,21 +322,21 @@ class AnalyzerFacade:
         )
 
         if method == "one":
-            event_durations = await self.data_transformer.calculate_duration(
+            event_durations = await transformer_strategy.calculate_duration(
                 events=calendar_events, event_name=event_name
             )
             return await plot_creator.plot(
                 events=event_durations, event_name=event_name
             )
         elif method == "many":
-            event_durations = await self.data_transformer.calculate_duration(
+            event_durations = await transformer_strategy.calculate_duration(
                 events=calendar_events,
                 max_events=self.max_events,
                 ascending=self.ascending,
             )
             return await plot_creator.plot(events=event_durations)
         elif method == "one_with_periods":
-            event_durations = await self.data_transformer.calculate_duration(
+            event_durations = await transformer_strategy.calculate_duration(
                 events=calendar_events,
                 event_name=event_name,
                 period_days=period_days,

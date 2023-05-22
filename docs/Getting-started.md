@@ -1,4 +1,4 @@
-To use the Google Calendar Analytics program, first install the dependencies by running the following command:
+To use the Google Calendar Analytics, first install the dependencies by running the following command:
 
 ```bash
 pip install google-calendar-analytics
@@ -45,12 +45,28 @@ end_time = datetime(2023, 3, 18)
 
 
 def main():
-    plot = await analyzer.analyze_one(start_time, end_time, event_name="Programming", plot_type="Line")
-    plot.show()
+    async with AnalyzerFacade(creds=creds) as analyzer:
+        plot = await analyzer.analyze_one(start_time, end_time, event_name="Programming", plot_type="Line")
+        plot.show()
 
 
 if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+What's about multiple plots?
+```python
+async def main():
+    async with AnalyzerFacade(creds=creds) as analyzer:
+        coroutines = []
+        
+        coroutines.append(analyzer.analyze_one(start_time, end_time, event_name="Programming", plot_type="Line")
+        coroutines.append(analyzer.analyze_one(start_time, end_time, event_name="Reading", plot_type="Line"))
+        coroutines.append(analyzer.analyze_many(start_time, end_time, event_name="Programming", plot_type="Pie"))
+
+                          
+        result = await asyncio.gather(*coroutines)
+        for plot in result:
+            plot.show()
+```
 

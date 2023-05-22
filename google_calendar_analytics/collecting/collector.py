@@ -1,22 +1,36 @@
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
-from googleapiclient.discovery import build  # type: ignore
+import aiohttp
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
 
 
 class AsyncCalendarDataCollector:
     """A class to collect data from a Google Calendar."""
 
-    def __init__(self, creds):
+    def __init__(self, creds: Credentials, session: aiohttp.ClientSession):
         self.service = build("calendar", "v3", credentials=creds)
+        self.session = session
+        self.creds = creds
+
+    async def _make_request(self, request):
+        """Make an API request using aiohttp.ClientSession."""
+        try:
+            url = request.uri
+            headers = request.headers.copy()
+            headers["Authorization"] = f"Bearer {self.creds.token}"
+
+            async with self.session.get(url, headers=headers) as resp:
+                return await resp.json()
+        except aiohttp.ClientError as e:
+            print(f"Error: {e}")
+            return None
 
     async def _get_events_by_time_range(
-        self,
-        time_min: str,
-        time_max: str,
-        calendar_id: str,
-        thread_pool: ThreadPoolExecutor,
+            self,
+            time_min: str,
+            time_max: str,
+            calendar_id: str,
     ) -> list:
         """Helper function to retrieve events in a specific time range."""
         events = []
@@ -32,10 +46,12 @@ class AsyncCalendarDataCollector:
                 pageToken=page_token,
             )
 
-            loop = asyncio.get_running_loop()
-            response = await loop.run_in_executor(thread_pool, request.execute)
-            events.extend(response.get("items", []))
+            response = await self._make_request(request)
 
+            if response is None:
+                break
+
+            events.extend(response.get("items", []))
             page_token = response.get("nextPageToken")
             if not page_token:
                 break
@@ -43,25 +59,15 @@ class AsyncCalendarDataCollector:
         return events
 
     async def collect_data(
-        self,
-        start_time: datetime,
-        end_time: datetime,
-        calendar_id: str = "primary",
-        thread_pool: ThreadPoolExecutor = None,  # type: ignore
+            self,
+            start_time: datetime,
+            end_time: datetime,
+            calendar_id: str = "primary",
     ) -> list:
         """Collect data from the calendar for the specified time range."""
-        if not thread_pool:
-            thread_pool = ThreadPoolExecutor()
 
-        try:
-            events = await self._get_events_by_time_range(
-                calendar_id=calendar_id,
-                time_min=start_time.isoformat() + "Z",
-                time_max=end_time.isoformat() + "Z",
-                thread_pool=thread_pool,
-            )
-        except Exception as e:
-            print(f"Error: {e}")
-            events = []
-
-        return events
+        return await self._get_events_by_time_range(
+            calendar_id=calendar_id,
+            time_min=start_time.isoformat() + "Z",
+            time_max=end_time.isoformat() + "Z",
+        )
