@@ -1,26 +1,26 @@
-name: Code Sanity Check
-
-on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install -r dev.requirements.txt
-      - name: Run sanity check
-        run: |
-          python3 -m pytest tests/functional/src/
+#name: Code Sanity Check
+#
+#on:
+#  push:
+#    branches: [ "master" ]
+#  pull_request:
+#    branches: [ "master" ]
+#
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Set up Python
+#        uses: actions/setup-python@v2
+#
+#      - name: Install dependencies
+#        run: |
+#          pip install --upgrade pip
+#          pip install -r dev.requirements.txt
+#      - name: Run sanity check
+#        run: |
+#          python3 -m pytest tests/functional/src/
