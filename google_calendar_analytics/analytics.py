@@ -157,7 +157,6 @@ class AnalyzerFacade:
         self.style_class = style_class
         self.plot_type = plot_type
 
-        # self.data_transformer.set_strategy(OneEventDurationStrategy())
         return await self._analyze(
             start_time=start_time,
             end_time=end_time,
@@ -212,7 +211,6 @@ class AnalyzerFacade:
         self.max_events = max_events
         self.ascending = ascending
 
-        # self.data_transformer.set_strategy(ManyEventsDurationStrategy())
         return await self._analyze(
             start_time=start_time,
             end_time=end_time,
