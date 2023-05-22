@@ -17,12 +17,8 @@ class AsyncCalendarDataCollector:
         """Make an API request using aiohttp.ClientSession."""
         try:
             url = request.uri
-            headers = request.headers
-            auth_param = f"access_token={self.creds.token}"
-            if "?" in url:
-                url += f"&{auth_param}"
-            else:
-                url += f"?{auth_param}"
+            headers = request.headers.copy()
+            headers["Authorization"] = f"Bearer {self.creds.token}"
 
             async with self.session.get(url, headers=headers) as resp:
                 return await resp.json()
@@ -31,10 +27,10 @@ class AsyncCalendarDataCollector:
             return None
 
     async def _get_events_by_time_range(
-        self,
-        time_min: str,
-        time_max: str,
-        calendar_id: str,
+            self,
+            time_min: str,
+            time_max: str,
+            calendar_id: str,
     ) -> list:
         """Helper function to retrieve events in a specific time range."""
         events = []
@@ -63,10 +59,10 @@ class AsyncCalendarDataCollector:
         return events
 
     async def collect_data(
-        self,
-        start_time: datetime,
-        end_time: datetime,
-        calendar_id: str = "primary",
+            self,
+            start_time: datetime,
+            end_time: datetime,
+            calendar_id: str = "primary",
     ) -> list:
         """Collect data from the calendar for the specified time range."""
 
