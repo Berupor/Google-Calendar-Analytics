@@ -170,7 +170,6 @@ class AsyncDataTransformer:
     ) -> pd.DataFrame:
         if not self.strategy:
             raise ValueError("Strategy is not set")
-        # print(events)
         return await self.strategy.calculate_duration(
             events,
         )
