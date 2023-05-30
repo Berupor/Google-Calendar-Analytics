@@ -109,7 +109,7 @@ contributions are particularly welcome include:
 |:-----------------------------------:|:-----------------------------------:|
 | ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Pie_ploty.png?raw=true) | ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Bar_ploty.png?raw=true) |
 
-|              Line plot               |                                          Multy line plot                                           |          
+|              Line plot               |                                          Multy line plot (_unstable_)                                           |          
 |:------------------------------------:|:--------------------------------------------------------------------------------------------------:|
 | ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Line_ploty.png?raw=true) | ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Multy.png?raw=true) |
  
