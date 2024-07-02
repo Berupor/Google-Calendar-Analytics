@@ -9,8 +9,8 @@
 
 ---
 
-- ### [Documentation](https://berupor.github.io/Calendar-Analytics/)
-- ### [Source code](https://github.com/Berupor/Calendar-Analytics)
+- ### [Documentation](https://berupor.github.io/Google-Calendar-Analytics/) 
+- ### [Source code](https://github.com/Berupor/Google-Calendar-Analytics)
 
 ---
 This Python program allows you to perform analytics on your Google Calendar events. With this program, you can visualize
@@ -107,7 +107,7 @@ contributions are particularly welcome include:
 
 |              Pie plot               |              Bar plot               |
 |:-----------------------------------:|:-----------------------------------:|
-| ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Pie_ploty.png?raw=true) | ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Bar_ploty.png?raw=true) |
+| ![img](https://github.com/Berupor/Google-Calendar-Analytics/blob/master/examples/plot_Pie_ploty.png?raw=true) | ![img](https://github.com/Berupor/Calendar-Analytics/blob/master/examples/plot_Bar_ploty.png?raw=true) |
 
 |              Line plot               |                                          Multy line plot (_unstable_)                                           |          
 |:------------------------------------:|:--------------------------------------------------------------------------------------------------:|
